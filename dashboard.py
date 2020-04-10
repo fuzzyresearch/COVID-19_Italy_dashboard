@@ -8,12 +8,10 @@ Created on Fri Mar  6 09:57:11 2020
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import os
 import datetime
 from ast import literal_eval
 import math
 from numpy import inf
-import requests, zipfile, io
 
 def num2str0(x):
     if x > 9:
@@ -90,7 +88,8 @@ dbreg = raw2dataframe(url_regional)
 dbpro = raw2dataframe(url_province)
 
 db_national = dbnat.drop(columns = ['note_it', 'note_en'])
-db_regional = dbreg.drop(columns = ['note_it', 'note_en'])
+db_regional = dbreg.loc[(dbreg.lat != 0) & (dbreg.long != 0)]
+db_regional = db_regional.drop(columns = ['note_it', 'note_en'])
 db_province = dbpro.loc[(dbpro.lat != 0) & (dbpro.long != 0)]
 db_province = db_province.drop(columns = ['note_it', 'note_en'])
 
@@ -268,28 +267,32 @@ db_conf_world = pd.read_csv(world_conf, sep = ',', error_bad_lines = False)
 world_last_cols = ['Province/State', 'Country/Region', 'Lat', 'Long', date2strWHO(end_world)]
 db_conf_world_last = db_conf_world.reindex(columns = world_last_cols)
 db_conf_world_last.columns = ['State', 'Country', 'Lat', 'Long', 'conf']
+db_conf_world_last = db_conf_world_last.loc[(db_conf_world_last.Lat != 0) & (db_conf_world_last.Long != 0)]
 db_conf_world_last["eq_coord"] = "("+db_conf_world_last.Lat.map(str)+","+db_conf_world_last.Long.map(str)+")"
 
 
 db_rec_world = pd.read_csv(world_rec, sep = ',', error_bad_lines = False)
 db_rec_world_last = db_rec_world.reindex(columns = world_last_cols)
 db_rec_world_last.columns = ['State', 'Country', 'Lat', 'Long', 'reco']
+db_rec_world_last = db_rec_world_last.loc[(db_rec_world_last.Lat != 0) & (db_rec_world_last.Long != 0)]
 db_rec_world_last["eq_coord"] = "("+db_rec_world_last.Lat.map(str)+","+db_rec_world_last.Long.map(str)+")"
 
 
 db_death_world = pd.read_csv(world_death, sep = ',', error_bad_lines = False)
 db_death_world_last = db_death_world.reindex(columns = world_last_cols)
 db_death_world_last.columns = ['State', 'Country', 'Lat', 'Long', 'dead']
+db_death_world_last = db_death_world_last.loc[(db_death_world_last.Lat != 0) & (db_death_world_last.Long != 0)]
 db_death_world_last["eq_coord"] = "("+db_death_world_last.Lat.map(str)+","+db_death_world_last.Long.map(str)+")"
 
 
 X_world_last = pd.merge(db_conf_world_last, db_rec_world_last, how = "left", on = "eq_coord")
 X_world_last = pd.merge(X_world_last, db_death_world_last, how = "left", on = "eq_coord")
-X_world_last = X_world_last.reindex(columns = ['State', 'Country', 'Lat', 'Long', "eq_coord", 'conf', 'reco', 'dead'])
-X_world_last = X_world_last.loc[(X_world_last.Lat != 0) & (X_world_last.Long != 0)]
+X_world_last = X_world_last.reindex(columns = ['State_x', 'Country_x', 'Lat_x', 'Long_x', "eq_coord", 'conf', 'reco', 'dead'])
+X_world_last = X_world_last.loc[(X_world_last.Lat_x != 0) & (X_world_last.Long_x != 0)]
+X_world_last.columns = ['State', 'Country', 'Lat', 'Long', "eq_coord", 'conf', 'reco', 'dead']
 X_world_last['State'] = X_world_last['State'].fillna('-')
 X_world_last = X_world_last.fillna(0.0)
-X_world_last["eq_coord"] = "("+X_world_last.Lat.map(str)+","+X_world_last.Long.map(str)+")"
+#X_world_last["eq_coord"] = "("+X_world_last.Lat.map(str)+","+X_world_last.Long.map(str)+")"
 X_world_last["utm_coord_x"] = X_world_last["eq_coord"].map(mercx)
 X_world_last["utm_coord_y"] = X_world_last["eq_coord"].map(mercy)
 
@@ -338,7 +341,7 @@ from scipy.integrate import odeint
 
 TIME_WINDOW_SI = 60
 yori = X_national.loc[:, "n_tot_pos"]
-SCENARIO_RANGE = np.array(range(len(yori)-15,len(yori)))
+SCENARIO_RANGE = np.array(range(len(yori)-10,len(yori)))
 def si(y):
     yn = (y-y.min())/(y.max()-y.min())
     x = np.array(range(len(y)))
@@ -359,14 +362,15 @@ newdate = np.array(newdate)
 
 ynew = []
 spike_x_list = []
-spike_y_list = []  
+spike_y_list = []
+  
 for m in SCENARIO_RANGE:
     i2 = si(yori.iloc[0:m])[1]
     ynew.append(i2)
     pos_spike = np.where(np.diff(np.sign(np.gradient(np.gradient(i2)))))
     spike_x_list.append(pos_spike[0][0])
     spike_y_list.append(round(i2[pos_spike][0],0))
-    
+        
 ydf = pd.DataFrame(data = np.transpose(ynew), columns = map(str, SCENARIO_RANGE))
 ydf["Date"] = newdate
 ydf.loc[:, "date_string"] = ydf.Date.map(date2str)
@@ -378,13 +382,13 @@ spikedf["Scenario"] = SCENARIO_RANGE
 
 ##############################################################################
 
-TIME_WINDOW_SIR = 90    
+TIME_WINDOW_SIR = 60    
 
 Iobs = X_national.loc[:, "n_tot_pos"]
 Robs = X_national.loc[:, "n_recovered"] + X_national.loc[:, "n_dead"]
 Iobs = Iobs-Robs
 min_scenario = Iobs.iloc[-1]*1.01
-max_scenario = Iobs.iloc[-1]*3
+max_scenario = Iobs.iloc[-1]*30
 list_of_scenarios0 = np.arange(min_scenario, max_scenario, (max_scenario-min_scenario)/10)
 list_of_scenarios0 = np.array(list(map(int, list_of_scenarios0)))
 def deriv(y, t, N, beta, gamma):
@@ -425,8 +429,8 @@ Iox = pd.DataFrame(data = np.array(Iobs), columns = ["n_tot_pos"])
 sirdf0 = pd.concat([sirdf0, Iox], axis = 1)
 
 min_scenario = Iobs.iloc[-1]*1.01
-max_scenario = 6*10**7
-list_of_scenarios1 = np.arange(min_scenario, max_scenario, (max_scenario-min_scenario)/10)
+max_scenario = 3*10**7
+list_of_scenarios1 = np.arange(np.max(list_of_scenarios0), max_scenario, (max_scenario-min_scenario)/10)
 list_of_scenarios1 = np.array(list(map(int, list_of_scenarios1)))
 Ilist = []
 for n in list_of_scenarios1:
@@ -1131,7 +1135,7 @@ p15.legend.click_policy="hide"
 p15b = bkh_plt.figure(tools = TOOLS_NEW, width=500, #height = 650,
                     title="Most hit country death trends",
                     #x_axis_label='x', #y_axis_label='y',
-                    x_axis_type='datetime', #y_axis_type = "log"
+                    x_axis_type='datetime', y_axis_type = "log"
                     )
 
 cmap = bkh_pal.Spectral[N_MAIN_COUNTRY] 
@@ -1164,8 +1168,9 @@ p16 = bkh_plt.figure(tools = TOOLS_NEW, width=500, #àheight = 650,
 
 cmap = bkh_pal.Category20[len(SCENARIO_RANGE)] 
 for i in range(len(SCENARIO_RANGE)):
-    lsi1 = p16.line(x = 'Date', y = str(SCENARIO_RANGE[i]), source = source_si, color = cmap[i], legend_label=str(SCENARIO_RANGE[i])+" observations", line_width = 2)
-    p16.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("n. observations", str(SCENARIO_RANGE[i])), ("Infected", "$y{0,000f}")], renderers=[lsi1]))
+    if np.sum(np.diff(source_si.data[str(SCENARIO_RANGE[i])])) > 10**(-3):
+        lsi1 = p16.line(x = 'Date', y = str(SCENARIO_RANGE[i]), source = source_si, color = cmap[i], legend_label=str(SCENARIO_RANGE[i])+" observations", line_width = 2)
+        p16.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("n. observations", str(SCENARIO_RANGE[i])), ("Infected", "$y{0,000f}")], renderers=[lsi1]))
 p16.circle(x = 'Date', y = "n_tot_pos", source = source_si, legend_label= "observed",
            color="red", size = 8, line_color = "red", alpha = 0.5, line_width = 2)
 p16.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0,000")
@@ -1185,12 +1190,16 @@ p17 = bkh_plt.figure(tools = TOOLS_NEW, width=500, #height = 650,
 cmap = bkh_pal.Category20[len(SCENARIO_RANGE)] 
 k = 0
 for i in range(len(SCENARIO_RANGE)):
-    lsi2 = p17.line(x = 'Date', y = str(SCENARIO_RANGE[i]), source = source_si, color = cmap[i], legend_label=str(SCENARIO_RANGE[i])+" observations", line_width = 2)
-    p17.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("n. observations", str(SCENARIO_RANGE[i])), ("Infected", "$y{0,000f}")], renderers=[lsi2]))
+    if np.sum(np.diff(source_si.data[str(SCENARIO_RANGE[i])])) > 10**(-3):
+        lsi2 = p17.line(x = 'Date', y = str(SCENARIO_RANGE[i]), source = source_si, color = cmap[i], legend_label=str(SCENARIO_RANGE[i])+" observations", line_width = 2)
+        p17.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("n. observations", str(SCENARIO_RANGE[i])), ("Infected", "$y{0,000f}")], renderers=[lsi2]))
     #p15.add_tools(bkh_mod.HoverTool(tooltips="This is %s %s" % (country, 'y'), renderers=[lx]))
     #p15.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("Country", country), ("Confirmed", "$y{0,000f}")], renderers=[lx]))
     #p15.add_tools(bkh_mod.HoverTool(tooltips = world_ts_tooltips))
     #k = k + 1
+#lsi2c = p17.cross(x = 'Date', y = str(SCENARIO_RANGE[-1]), source = source_si, color = 'gray', 
+#                   legend_label='forecast', size = 8, line_color = "gray", alpha = 0.5, line_width = 2)
+#p17.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("n. observations", str(SCENARIO_RANGE[-1])), ("Infected", "$y{0,000f}")], renderers=[lsi2c]))
 p17.circle(x = 'Date', y = "n_tot_pos", source = source_si, legend_label= "observed",
            color="red", size = 8, line_color = "red", alpha = 0.5, line_width = 2)
 p17.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0,000")
@@ -1215,7 +1224,8 @@ p18.circle(x = 'Date', y = "n_tot_pos", source = source_si, legend_label= "obser
 lsi3 = p18.cross(x = 'Date', y = "y_spike", source = source_si_spike, legend_label= "inflexion",
            color="black", size = 25, line_color = "black", alpha = 0.5, line_width = 2)
 p18.add_tools(bkh_mod.HoverTool( tooltips=[("Exp. Spike date", "@date_string"),  ("Spike value:", "@y_spike{0,000f}"), ("n. observations", "@Scenario")], renderers=[lsi3]))
-p18.line(x = 'Date', y = str(SCENARIO_RANGE[-1]), source = source_si, color = "blue", legend_label=str(SCENARIO_RANGE[-1])+ " observations", line_width = 2)
+if np.sum(np.diff(source_si.data[str(SCENARIO_RANGE[-1])])) > 10**(-3):
+    p18.diamond(x = 'Date', y = str(SCENARIO_RANGE[-1]), source = source_si, color = "blue", legend_label=str(SCENARIO_RANGE[-1])+ " observations", size = 8, alpha = 0.75, line_width = 2)
 p18.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0,000")
 p18.legend.label_text_font_size = "9pt"
 p18.background_fill_color ="gainsboro"
@@ -1265,7 +1275,7 @@ p20.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0,000")
 p20.legend.label_text_font_size = "9pt"
 p20.background_fill_color ="gainsboro"
 p20.sizing_mode = 'scale_width'
-p20.legend.location = "top_right"
+p20.legend.location = "top_left"
 p20.legend.background_fill_alpha = 0.0
 p20.legend.click_policy="hide"
 
