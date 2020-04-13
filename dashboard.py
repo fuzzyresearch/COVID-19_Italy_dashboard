@@ -382,14 +382,14 @@ spikedf["Scenario"] = SCENARIO_RANGE
 
 ##############################################################################
 
-TIME_WINDOW_SIR = 60    
+TIME_WINDOW_SIR = 54    
 
 Iobs = X_national.loc[:, "n_tot_pos"]
 Robs = X_national.loc[:, "n_recovered"] + X_national.loc[:, "n_dead"]
 Iobs = Iobs-Robs
 min_scenario = Iobs.iloc[-1]*1.01
-max_scenario = Iobs.iloc[-1]*30
-list_of_scenarios0 = np.arange(min_scenario, max_scenario, (max_scenario-min_scenario)/10)
+max_scenario = Iobs.iloc[-1]*2
+list_of_scenarios0 = np.arange(min_scenario, max_scenario, (max_scenario-min_scenario)/15)
 list_of_scenarios0 = np.array(list(map(int, list_of_scenarios0)))
 def deriv(y, t, N, beta, gamma):
     S, I, R = y
@@ -708,7 +708,7 @@ p03.add_tools(bkh_mod.HoverTool(tooltips = reg_tooltips))
 p04 = bkh_plt.figure(tools = TOOLS_NEW, width=500, #height=350,
                     title="Daily Absolute Variations for Italy",
                     #x_axis_label='x', #y_axis_label='y',
-                    x_axis_type='datetime', y_axis_type="log"
+                    x_axis_type='datetime', #y_axis_type="log"
                     )
 #p04.y_range=bkh_mod.Range1d(bottom, top)
 #p04.circle(x = 'date', y = 'n_swab_diff', source = source_db, legend_label="Swabs",
@@ -1253,7 +1253,7 @@ p19.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0,000")
 p19.legend.label_text_font_size = "9pt"
 p19.background_fill_color ="gainsboro"
 p19.sizing_mode = 'scale_width'
-p19.legend.location = "top_left"
+p19.legend.location = "bottom_right"
 p19.legend.background_fill_alpha = 0.0
 p19.legend.click_policy="hide"
 
@@ -1261,21 +1261,21 @@ p20 = bkh_plt.figure(tools = TOOLS_NEW, width=500, #àheight = 650,
                     title="SIR Model Forecast (for different sizes of susceptible population)",
                     #x_axis_label='x', 
                     #y_axis_label='Number of infected',
-                    x_axis_type='datetime', #y_axis_type = "log"
+                    x_axis_type='datetime', y_axis_type = "log"
                     )
 
-cmap = bkh_pal.inferno(len(list_of_scenarios1))
-for i in range(len(list_of_scenarios1)):
-    lsi5 = p20.line(x = 'Date', y = str(list_of_scenarios1[i]), source = source_sir1, color = cmap[i], legend_label='{:,}'.format((round(list_of_scenarios1[i],0))), line_width = 2)
-    p20.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("Population Size", str(list_of_scenarios1[i])), ("Infected", "$y{0,000f}")], renderers=[lsi5]))
-lsi5b = p20.circle(x = 'Date', y = "n_tot_pos", source = source_sir1, legend_label= "observed",
+cmap = bkh_pal.inferno(len(list_of_scenarios0))
+for i in range(len(list_of_scenarios0)):
+    lsi5 = p20.line(x = 'Date', y = str(list_of_scenarios0[i]), source = source_sir0, color = cmap[i], legend_label='{:,}'.format((round(list_of_scenarios0[i],0))), line_width = 2)
+    p20.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("Population Size", str(list_of_scenarios0[i])), ("Infected", "$y{0,000f}")], renderers=[lsi5]))
+lsi5b = p20.circle(x = 'Date', y = "n_tot_pos", source = source_sir0, legend_label= "observed",
            color="red", size = 8, line_color = "red", alpha = 0.5, line_width = 2)
 p20.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"), ("Positives without removed", "$y{0,000f}")], renderers=[lsi5b]))
 p20.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0,000")
 p20.legend.label_text_font_size = "9pt"
 p20.background_fill_color ="gainsboro"
 p20.sizing_mode = 'scale_width'
-p20.legend.location = "top_left"
+p20.legend.location = "bottom_right"
 p20.legend.background_fill_alpha = 0.0
 p20.legend.click_policy="hide"
 
@@ -1297,7 +1297,7 @@ p21.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"), ("Positives
 p21.legend.label_text_font_size = "9pt"
 p21.background_fill_color ="gainsboro"
 p21.sizing_mode = 'scale_width'
-p21.legend.location = "bottom_left"
+p21.legend.location = "bottom_right"
 p21.legend.background_fill_alpha = 0.0
 p21.legend.click_policy="hide"
 ##############################################################################
