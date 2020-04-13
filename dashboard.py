@@ -168,7 +168,6 @@ X_national_frac["date_string"] = np.array(X_national["date_string"])
 X_national_2 = pd.merge(X_national, X_national_frac, how = 'left', on = 'date_string')
 X_national_3 = pd.merge(X_national_2, X_national_pct, how = 'left', on = 'date_string')
 X_national_4 = pd.merge(X_national_3, X_national_diff, how = 'left', on = 'date_string')
-
 #%%
 X_regional_last = X_regional.loc[X_regional.date == end,:].reset_index(drop = True)
 X_regional_last["n_tot_pos_map"] = (X_regional_last["n_tot_pos"])**0.45
@@ -382,14 +381,14 @@ spikedf["Scenario"] = SCENARIO_RANGE
 
 ##############################################################################
 
-TIME_WINDOW_SIR = 60    
+TIME_WINDOW_SIR = 54    
 
 Iobs = X_national.loc[:, "n_tot_pos"]
 Robs = X_national.loc[:, "n_recovered"] + X_national.loc[:, "n_dead"]
 Iobs = Iobs-Robs
 min_scenario = Iobs.iloc[-1]*1.01
-max_scenario = Iobs.iloc[-1]*30
-list_of_scenarios0 = np.arange(min_scenario, max_scenario, (max_scenario-min_scenario)/10)
+max_scenario = Iobs.iloc[-1]*2
+list_of_scenarios0 = np.arange(min_scenario, max_scenario, (max_scenario-min_scenario)/15)
 list_of_scenarios0 = np.array(list(map(int, list_of_scenarios0)))
 def deriv(y, t, N, beta, gamma):
     S, I, R = y
@@ -596,12 +595,21 @@ Sign.sizing_mode = 'scale_width'
 
 LegClick = bkh_mod_w.Div(text =
 """
-<font color = "red"> <i> Click on legend items to activate/remove curves </i></font> <br>
+<font color = "red"> <i><b> Click on legend items to activate/remove curves </b></i></font> <br>
 <font color = "red"> <i> Hover on points to see further details </i></font>
 """, 
 #width=1500, height=75
 )
 LegClick.sizing_mode = 'scale_width'
+
+LegMeaning = bkh_mod_w.Div(text =
+"""
+Cases = Positives + Recovered + Deaths; <br> IC = Intensive Care; <br>
+Hospitalized = Hospitalized patients without IC and with IC.
+""", 
+#width=1500, height=75
+)
+LegMeaning.sizing_mode = 'scale_width'
     
     
 
@@ -708,28 +716,29 @@ p03.add_tools(bkh_mod.HoverTool(tooltips = reg_tooltips))
 p04 = bkh_plt.figure(tools = TOOLS_NEW, width=500, #height=350,
                     title="Daily Absolute Variations for Italy",
                     #x_axis_label='x', #y_axis_label='y',
-                    x_axis_type='datetime', y_axis_type="log"
+                    x_axis_type='datetime', #y_axis_type="log"
                     )
 #p04.y_range=bkh_mod.Range1d(bottom, top)
-#p04.circle(x = 'date', y = 'n_swab_diff', source = source_db, legend_label="Swabs",
+cir = {}; lin = {}
+#cir["Swabs"] = p04.circle(x = 'date', y = 'n_swab_diff', source = source_db, legend_label="Swabs",
 #          color="blue", size = 10, fill_alpha = 0.5, line_color = 'blue', line_width = 2)
-#p04.line(x = 'date', y = 'n_swab_diff', source = source_db, legend_label="Swabs",
+#lin["Swabs"] = p04.line(x = 'date', y = 'n_swab_diff', source = source_db, legend_label="Swabs",
 #          color="blue", line_color = 'blue', line_width = 2)
-p04.circle(x = 'date', y = 'n_tot_case_diff', source = source_db, legend_label="Cases",
+cir["Cases"] = p04.circle(x = 'date', y = 'n_tot_case_diff', source = source_db, legend_label="Cases",
           color="magenta", size = 10, fill_alpha = 0.5, line_color = 'magenta', line_width = 2)
-p04.line(x = 'date', y = 'n_tot_case_diff', source = source_db, legend_label="Cases",
+lin["Cases"] = p04.line(x = 'date', y = 'n_tot_case_diff', source = source_db, legend_label="Cases",
           color="magenta", line_color = 'magenta', line_width = 2)
 p04.circle(x = 'date', y = 'n_tot_pos_diff', source = source_db, legend_label="Positives",
           color="red", size = 10, fill_alpha = 0.5, line_color = 'red', line_width = 2)
 p04.line(x = 'date', y = 'n_tot_pos_diff', source = source_db, legend_label="Positives",
           color="red", line_color = 'red', line_width = 2)
-p04.circle(x = 'date', y = 'n_tot_hosp_diff', source = source_db, legend_label="Hospitalized",
+cir["Hospitalized"] = p04.circle(x = 'date', y = 'n_tot_hosp_diff', source = source_db, legend_label="Hospitalized",
           color="orange", size = 10, fill_alpha = 0.5, line_color = 'orange', line_width = 2)
-p04.line(x = 'date', y = 'n_tot_hosp_diff', source = source_db, legend_label="Hospitalized",
+lin["Hospitalized"] = p04.line(x = 'date', y = 'n_tot_hosp_diff', source = source_db, legend_label="Hospitalized",
           color="orange", line_color = 'orange', line_width = 2)
-p04.circle(x = 'date', y = 'n_recovered_diff', source = source_db, legend_label="Recovered",
+cir["Recovered"] = p04.circle(x = 'date', y = 'n_recovered_diff', source = source_db, legend_label="Recovered",
           color="green", size = 10, fill_alpha = 0.5, line_color = 'green', line_width = 2)
-p04.line(x = 'date', y = 'n_recovered_diff', source = source_db, legend_label="Recovered",
+lin["Recovered"] = p04.line(x = 'date', y = 'n_recovered_diff', source = source_db, legend_label="Recovered",
           color="green", line_color = 'green', line_width = 2)
 p04.circle(x = 'date', y = 'n_ic_diff', source = source_db, legend_label="IC",
           color="purple", size = 10, fill_alpha = 0.5, line_color = 'purple', line_width = 2)
@@ -739,6 +748,15 @@ p04.circle(x = 'date', y = 'n_dead_diff', source = source_db, legend_label="Deat
           color="black", size = 10, fill_alpha = 0.5, line_color = 'black', line_width = 2)
 p04.line(x = 'date', y = 'n_dead_diff', source = source_db, legend_label="Deaths",
           color="black", line_color = 'black', line_width = 2)
+#lin["Swabs"].visible = False
+lin["Cases"].visible = False
+lin["Hospitalized"].visible = False
+lin["Recovered"].visible = False
+#cir["Swabs"].visible = False
+cir["Cases"].visible = False
+cir["Hospitalized"].visible = False
+cir["Recovered"].visible = False
+
 p04.background_fill_color ="gainsboro"
 p04.sizing_mode = 'scale_width'
 p04.legend.location = "top_left"
@@ -1253,7 +1271,7 @@ p19.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0,000")
 p19.legend.label_text_font_size = "9pt"
 p19.background_fill_color ="gainsboro"
 p19.sizing_mode = 'scale_width'
-p19.legend.location = "top_left"
+p19.legend.location = "bottom_right"
 p19.legend.background_fill_alpha = 0.0
 p19.legend.click_policy="hide"
 
@@ -1261,21 +1279,21 @@ p20 = bkh_plt.figure(tools = TOOLS_NEW, width=500, #àheight = 650,
                     title="SIR Model Forecast (for different sizes of susceptible population)",
                     #x_axis_label='x', 
                     #y_axis_label='Number of infected',
-                    x_axis_type='datetime', #y_axis_type = "log"
+                    x_axis_type='datetime', y_axis_type = "log"
                     )
 
-cmap = bkh_pal.inferno(len(list_of_scenarios1))
-for i in range(len(list_of_scenarios1)):
-    lsi5 = p20.line(x = 'Date', y = str(list_of_scenarios1[i]), source = source_sir1, color = cmap[i], legend_label='{:,}'.format((round(list_of_scenarios1[i],0))), line_width = 2)
-    p20.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("Population Size", str(list_of_scenarios1[i])), ("Infected", "$y{0,000f}")], renderers=[lsi5]))
-lsi5b = p20.circle(x = 'Date', y = "n_tot_pos", source = source_sir1, legend_label= "observed",
+cmap = bkh_pal.inferno(len(list_of_scenarios0))
+for i in range(len(list_of_scenarios0)):
+    lsi5 = p20.line(x = 'Date', y = str(list_of_scenarios0[i]), source = source_sir0, color = cmap[i], legend_label='{:,}'.format((round(list_of_scenarios0[i],0))), line_width = 2)
+    p20.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("Population Size", str(list_of_scenarios0[i])), ("Infected", "$y{0,000f}")], renderers=[lsi5]))
+lsi5b = p20.circle(x = 'Date', y = "n_tot_pos", source = source_sir0, legend_label= "observed",
            color="red", size = 8, line_color = "red", alpha = 0.5, line_width = 2)
 p20.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"), ("Positives without removed", "$y{0,000f}")], renderers=[lsi5b]))
 p20.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0,000")
 p20.legend.label_text_font_size = "9pt"
 p20.background_fill_color ="gainsboro"
 p20.sizing_mode = 'scale_width'
-p20.legend.location = "top_left"
+p20.legend.location = "bottom_right"
 p20.legend.background_fill_alpha = 0.0
 p20.legend.click_policy="hide"
 
@@ -1297,7 +1315,7 @@ p21.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"), ("Positives
 p21.legend.label_text_font_size = "9pt"
 p21.background_fill_color ="gainsboro"
 p21.sizing_mode = 'scale_width'
-p21.legend.location = "bottom_left"
+p21.legend.location = "bottom_right"
 p21.legend.background_fill_alpha = 0.0
 p21.legend.click_policy="hide"
 ##############################################################################
@@ -1361,14 +1379,14 @@ note_en.sizing_mode = 'scale_width'
 
     
 ### Costruzione delle Tab e dei titoli
-ptab1 = bkh_plt.gridplot([[cover_1, LegClick], [p01, p02, p03], [Sign]], toolbar_location = 'left')
-ptab2 = bkh_plt.gridplot([[cover_1, LegClick], [p04, p05, p06], [Sign]], toolbar_location = 'left')
-ptab3 = bkh_plt.gridplot([[cover_1, LegClick], [p07, p08, p09],[Sign]], toolbar_location = 'left')
-ptab4 = bkh_plt.gridplot([[cover_1, LegClick], [p10, p11, p12], [Sign]], toolbar_location = 'left')
+ptab1 = bkh_plt.gridplot([[cover_1, LegClick, LegMeaning], [p01, p02, p03], [Sign]], toolbar_location = 'left')
+ptab2 = bkh_plt.gridplot([[cover_1, LegClick, LegMeaning], [p04, p05, p06], [Sign]], toolbar_location = 'left')
+ptab3 = bkh_plt.gridplot([[cover_1, LegClick, LegMeaning], [p07, p08, p09],[Sign]], toolbar_location = 'left')
+ptab4 = bkh_plt.gridplot([[cover_1, LegClick, LegMeaning], [p10, p11, p12], [Sign]], toolbar_location = 'left')
 ptab5 = bkh_plt.gridplot([[cover_world], [p13], [Sign]], toolbar_location = 'left')
-ptab6 = bkh_plt.gridplot([[cover_world, LegClick], [p15, p15b, p14], [Sign]], toolbar_location = 'left')
-ptab7 = bkh_plt.gridplot([[cover_1, LegClick], [p16, p17, p18], [Sign]], toolbar_location = 'left')
-ptab8 = bkh_plt.gridplot([[cover_1, LegClick], [p19, p20, p21], [Sign]], toolbar_location = 'left')
+ptab6 = bkh_plt.gridplot([[cover_world, LegClick, LegMeaning], [p15, p15b, p14], [Sign]], toolbar_location = 'left')
+ptab7 = bkh_plt.gridplot([[cover_1, LegClick, LegMeaning], [p16, p17, p18], [Sign]], toolbar_location = 'left')
+ptab8 = bkh_plt.gridplot([[cover_1, LegClick, LegMeaning], [p19, p20, p21], [Sign]], toolbar_location = 'left')
 ptabnote = bkh_plt.gridplot([[note_en, note_it]], toolbar_location = 'left')
 
 
