@@ -338,22 +338,51 @@ from scipy.optimize import Bounds, minimize, curve_fit
 from scipy.integrate import odeint
 
 
-TIME_WINDOW_SI = 60
-yori = X_national.loc[:, "n_tot_pos"]
-SCENARIO_RANGE = np.array(range(len(yori)-10,len(yori)))
-def si(y):
+def si(y, future_time_window):
     yn = (y-y.min())/(y.max()-y.min())
     x = np.array(range(len(y)))
     def f(x, a, b, c, d):
         return a / (1. + np.exp(-c * (x - d))) + b
     (aest, best, cest, dest) = curve_fit(f, x, yn)[0]
     yest = f(x, aest, best, cest, dest)
-    xnew = np.array(range(TIME_WINDOW_SI))
     Iest = yest*(y.max()-y.min())+y.min()
+    xnew = np.array(range(future_time_window))
     ynew = f(xnew, aest, best, cest, dest)
     Inew = ynew*(y.max()-y.min())+y.min()
     return Iest, Inew
 
+
+ROLLING_WINDOW_SI = 25
+FUTURE_TIME_WINDOW = 40
+
+remaining_list_of_date = []
+for i in range(1, FUTURE_TIME_WINDOW):
+    remaining_list_of_date.append(list_of_date_italy[-1] + datetime.timedelta(days=i))
+
+all_dates = sum([list_of_date_italy, remaining_list_of_date], [])
+
+yori = X_national.loc[:, "n_tot_pos"]
+
+si_result = pd.DataFrame(data = all_dates, columns = ["Date"])
+si_result["Date"] = all_dates
+for j in range(0,len(list_of_date_italy)-ROLLING_WINDOW_SI+1):
+    sel_date = list_of_date_italy[j:j+ROLLING_WINDOW_SI]
+    end_date = sel_date[-1]
+    for i in range(1, FUTURE_TIME_WINDOW+1):
+        sel_date = np.append(sel_date, end_date + datetime.timedelta(days=i))
+    sel_yori = yori.iloc[j:j+ROLLING_WINDOW_SI]
+    yforec = si(sel_yori, ROLLING_WINDOW_SI+FUTURE_TIME_WINDOW)[1]
+    sel_df = pd.DataFrame(data = yforec, index = sel_date, columns = [str(sel_date[0])])
+    sel_df["Date"] = sel_date
+    si_result = pd.merge(si_result, sel_df, how = "left", on = "Date")
+si_scenario_columns = si_result.drop(columns = ["Date"]).columns
+si_result.loc[:, "date_string"] = si_result.Date.map(date2str)
+
+
+
+TIME_WINDOW_SI = 60
+yori = X_national.loc[:, "n_tot_pos"]
+SCENARIO_RANGE = np.array(range(len(yori)-10,len(yori)))
 newdate = []
 for i in range(TIME_WINDOW_SI):
     newdate.append(start + datetime.timedelta(days=i))
@@ -364,17 +393,10 @@ spike_x_list = []
 spike_y_list = []
   
 for m in SCENARIO_RANGE:
-    i2 = si(yori.iloc[0:m])[1]
-    ynew.append(i2)
+    i2 = si(yori.iloc[0:m], TIME_WINDOW_SI)[1]
     pos_spike = np.where(np.diff(np.sign(np.gradient(np.gradient(i2)))))
     spike_x_list.append(pos_spike[0][0])
     spike_y_list.append(round(i2[pos_spike][0],0))
-        
-ydf = pd.DataFrame(data = np.transpose(ynew), columns = map(str, SCENARIO_RANGE))
-ydf["Date"] = newdate
-ydf.loc[:, "date_string"] = ydf.Date.map(date2str)
-ydf2 = pd.concat([ydf, yori], axis = 1)
-
 spikedf = pd.DataFrame({'Date': newdate[spike_x_list], 'x_spike': spike_x_list, 'y_spike': spike_y_list})
 spikedf.loc[:, "date_string"] = spikedf.Date.map(date2str)
 spikedf["Scenario"] = SCENARIO_RANGE
@@ -556,7 +578,7 @@ source_db_world_conf_ts = bkh_mod.ColumnDataSource(data = X_conf_world_time_seri
 source_db_world_death_ts = bkh_mod.ColumnDataSource(data = X_death_world_time_series)
 source_db_world_doubling = bkh_mod.ColumnDataSource(data = X_conf_world_doubling)
 
-source_si = bkh_mod.ColumnDataSource(data = ydf2)
+source_si = bkh_mod.ColumnDataSource(data = si_result)
 source_si_spike = bkh_mod.ColumnDataSource(data = spikedf)
 source_sir0 = bkh_mod.ColumnDataSource(data = sirdf0)
 source_sir1 = bkh_mod.ColumnDataSource(data = sirdf1)
@@ -582,6 +604,7 @@ cover_1 = bkh_mod_w.Div(text =
 '{:,}'.format(X_national.n_tot_pos.iloc[-1]),
 '{:,}'.format(X_national.n_dead.iloc[-1])), #width=250, height=75
 )
+    
 Sign = bkh_mod_w.Div(text =
 """
 Licensed under Creative Commons <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons Licence" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/80x15.png" /></a><br>
@@ -604,8 +627,8 @@ LegClick.sizing_mode = 'scale_width'
 
 LegMeaning = bkh_mod_w.Div(text =
 """
-Cases = Positives + Recovered + Deaths; <br> IC = Intensive Care; <br>
-Hospitalized = Hospitalized patients without IC and with IC.
+Cases = Positives + Recovered + Deaths <br> IC = Intensive Care <br>
+Hospitalized = Hospitalized patients without IC and with IC
 """, 
 #width=1500, height=75
 )
@@ -1178,18 +1201,18 @@ p15b.legend.click_policy="hide"
 
 ##############################################################################
 
-p16 = bkh_plt.figure(tools = TOOLS_NEW, width=500, #àheight = 650,
-                    title="SI Model Forecast (for different size of observations)",
+p16 = bkh_plt.figure(tools = TOOLS_NEW, width=500, #height = 650,
+                    title="SI Model Forecast (for different start forecast dates)",
                     #x_axis_label='x', 
                     y_axis_label='Number of infected',
                     x_axis_type='datetime', y_axis_type = "log")
 
-cmap = bkh_pal.Category20[len(SCENARIO_RANGE)] 
-for i in range(len(SCENARIO_RANGE)):
-    if np.sum(np.diff(source_si.data[str(SCENARIO_RANGE[i])])) > 10**(-3):
-        lsi1 = p16.line(x = 'Date', y = str(SCENARIO_RANGE[i]), source = source_si, color = cmap[i], legend_label=str(SCENARIO_RANGE[i])+" observations", line_width = 2)
-        p16.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("n. observations", str(SCENARIO_RANGE[i])), ("Infected", "$y{0,000f}")], renderers=[lsi1]))
-p16.circle(x = 'Date', y = "n_tot_pos", source = source_si, legend_label= "observed",
+cmap = bkh_pal.inferno(len(si_scenario_columns)) 
+for i in range(len(si_scenario_columns)):
+    lsi1 = p16.line(x = 'Date', y = str(si_scenario_columns[i]), source = source_si, color = cmap[i], #legend_label=str(si_scenario_columns[i]), 
+                    line_width = 2)
+    p16.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("Start forecast date", str(si_scenario_columns[i])), ("Infected", "$y{0,000f}")], renderers=[lsi1]))
+p16.circle(x = 'date', y = "n_tot_pos", source = source_db, legend_label= "observed",
            color="red", size = 8, line_color = "red", alpha = 0.5, line_width = 2)
 p16.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0,000")
 p16.legend.label_text_font_size = "9pt"
@@ -1200,17 +1223,17 @@ p16.legend.background_fill_alpha = 0.0
 p16.legend.click_policy="hide"
 
 p17 = bkh_plt.figure(tools = TOOLS_NEW, width=500, #height = 650,
-                    title="SI Model Forecast  (for different size of observations)",
+                    title="SI Model Forecast  (for different start forecast dates)",
                     #x_axis_label='x', #y_axis_label='y',
                     x_axis_type='datetime', #y_axis_type = "log"
                     )
 
-cmap = bkh_pal.Category20[len(SCENARIO_RANGE)] 
+cmap = bkh_pal.inferno(len(si_scenario_columns))
 k = 0
-for i in range(len(SCENARIO_RANGE)):
-    if np.sum(np.diff(source_si.data[str(SCENARIO_RANGE[i])])) > 10**(-3):
-        lsi2 = p17.line(x = 'Date', y = str(SCENARIO_RANGE[i]), source = source_si, color = cmap[i], legend_label=str(SCENARIO_RANGE[i])+" observations", line_width = 2)
-        p17.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("n. observations", str(SCENARIO_RANGE[i])), ("Infected", "$y{0,000f}")], renderers=[lsi2]))
+for i in range(len(si_scenario_columns)):
+    lsi2 = p17.line(x = 'Date', y = str(si_scenario_columns[i]), source = source_si, color = cmap[i], #legend_label=str(si_scenario_columns[i])+" observations", 
+                    line_width = 2)
+    p17.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("Start forecast date", str(si_scenario_columns[i])), ("Infected", "$y{0,000f}")], renderers=[lsi2]))
     #p15.add_tools(bkh_mod.HoverTool(tooltips="This is %s %s" % (country, 'y'), renderers=[lx]))
     #p15.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("Country", country), ("Confirmed", "$y{0,000f}")], renderers=[lx]))
     #p15.add_tools(bkh_mod.HoverTool(tooltips = world_ts_tooltips))
@@ -1218,7 +1241,7 @@ for i in range(len(SCENARIO_RANGE)):
 #lsi2c = p17.cross(x = 'Date', y = str(SCENARIO_RANGE[-1]), source = source_si, color = 'gray', 
 #                   legend_label='forecast', size = 8, line_color = "gray", alpha = 0.5, line_width = 2)
 #p17.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("n. observations", str(SCENARIO_RANGE[-1])), ("Infected", "$y{0,000f}")], renderers=[lsi2c]))
-p17.circle(x = 'Date', y = "n_tot_pos", source = source_si, legend_label= "observed",
+p17.circle(x = 'date', y = "n_tot_pos", source = source_db, legend_label= "observed",
            color="red", size = 8, line_color = "red", alpha = 0.5, line_width = 2)
 p17.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0,000")
 p17.legend.label_text_font_size = "9pt"
@@ -1237,13 +1260,12 @@ p18 = bkh_plt.figure(tools = TOOLS_NEW, width=500, #height = 650,
 
 cmap = bkh_pal.Category20[len(SCENARIO_RANGE)] 
 k = 0
-p18.circle(x = 'Date', y = "n_tot_pos", source = source_si, legend_label= "observed",
+p18.circle(x = 'date', y = "n_tot_pos", source = source_db, legend_label= "observed",
            color="magenta", size = 8, line_color = "magenta", alpha = 0.5, line_width = 2)
 lsi3 = p18.cross(x = 'Date', y = "y_spike", source = source_si_spike, legend_label= "inflexion",
            color="black", size = 25, line_color = "black", alpha = 0.5, line_width = 2)
 p18.add_tools(bkh_mod.HoverTool( tooltips=[("Exp. Spike date", "@date_string"),  ("Spike value:", "@y_spike{0,000f}"), ("n. observations", "@Scenario")], renderers=[lsi3]))
-if np.sum(np.diff(source_si.data[str(SCENARIO_RANGE[-1])])) > 10**(-3):
-    p18.diamond(x = 'Date', y = str(SCENARIO_RANGE[-1]), source = source_si, color = "blue", legend_label=str(SCENARIO_RANGE[-1])+ " observations", size = 8, alpha = 0.75, line_width = 2)
+p18.diamond(x = 'Date', y = str(si_scenario_columns[-1]), source = source_si, color = "blue", legend_label=str(si_scenario_columns[-1])+ " observations", size = 8, alpha = 0.75, line_width = 2)
 p18.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0,000")
 p18.legend.label_text_font_size = "9pt"
 p18.background_fill_color ="gainsboro"
@@ -1326,11 +1348,11 @@ sulla diffusione in Italia, in Puglia e nel Mondo del COVID-19. <br><br>
 
 Sono presenti inoltre delle previsioni basate sui modelli semplificati SI e SIR per l'Italia. <br><br>
 
-I grafici sono completamente navigabili: è possibile eseguire zoom, attivare o <br>
-disattivare le curve (cliccando sulle voci della legenda) e far comparire ulteriori <br>
+I grafici sono completamente navigabili: è possibile eseguire zoom, attivare o
+disattivare le curve (cliccando sulle voci della legenda) e far comparire ulteriori
 informazioni di dettaglio passando con il mouse sui punti di interesse dei grafici. <br><br>
 
-I risultati sono aggiornati ogni sera alle 20:00 con un refresh automatico <br>
+I risultati sono aggiornati ogni giorno alle 9:00 e alle 19:00 con un refresh automatico <br>
 della sorgente dati dalle repository ufficiali su Github del<br>
 <b> Dipartimento della Protezione Civile </b>: <a xmlns:dct="http://purl.org/dc/terms/" href="https://github.com/pcm-dpc/COVID-19" rel="dct:source">https://github.com/pcm-dpc/COVID-19</a><br>
 <b> Johns Hopkins University (JHU CSSE) </b> : <a xmlns:dct="http://purl.org/dc/terms/" href="https://github.com/CSSEGISandData/COVID-19" rel="dct:source">https://github.com/CSSEGISandData/COVID-19</a>
@@ -1360,11 +1382,11 @@ in the World and in Apulia Region of Italy. <br><br>
 
 Forecasts based on SI and SIR models have been reported for Italy situation. <br><br>
 
-All charts are completely navigable: you can zoom, activate or deactivate the curves <br>
+All charts are completely navigable: you can zoom, activate or deactivate the curves
 by clickin on legend items and show further details by hovering the mouse over the graphs. <br><br>
 
-Charts are updated on a daily basis at 8pm (CET) through automatic refresh <br>
-of data sources at the official repository of <br>
+Charts are updated on a daily basis at 9:00 and 19:00 (Rome Time) through automatic refresh
+of data sources at the official repository of
 <b> Italian Civil Protection </b>: <a xmlns:dct="http://purl.org/dc/terms/" href="https://github.com/pcm-dpc/COVID-19" rel="dct:source">https://github.com/pcm-dpc/COVID-19</a><br>
 <b> Johns Hopkins University (JHU CSSE) </b> : <a xmlns:dct="http://purl.org/dc/terms/" href="https://github.com/CSSEGISandData/COVID-19" rel="dct:source">https://github.com/CSSEGISandData/COVID-19</a>
 <br><br><br>
