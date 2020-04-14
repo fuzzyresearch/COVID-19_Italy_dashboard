@@ -378,6 +378,12 @@ for j in range(0,len(list_of_date_italy)-ROLLING_WINDOW_SI+1):
 si_scenario_columns = si_result.drop(columns = ["Date"]).columns
 si_result.loc[:, "date_string"] = si_result.Date.map(date2str)
 
+si_result_diff = si_result.copy()
+si_result_diff = si_result_diff.reindex(columns = si_scenario_columns)
+si_result_diff = si_result_diff.diff()
+si_result_diff["Date"] = si_result.Date
+si_result_diff.loc[:, "date_string"] = si_result_diff.Date.map(date2str)
+
 
 
 TIME_WINDOW_SI = 60
@@ -580,6 +586,7 @@ source_db_world_doubling = bkh_mod.ColumnDataSource(data = X_conf_world_doubling
 
 source_si = bkh_mod.ColumnDataSource(data = si_result)
 source_si_spike = bkh_mod.ColumnDataSource(data = spikedf)
+source_si_diff = bkh_mod.ColumnDataSource(data = si_result_diff)
 source_sir0 = bkh_mod.ColumnDataSource(data = sirdf0)
 source_sir1 = bkh_mod.ColumnDataSource(data = sirdf1)
 
@@ -1212,8 +1219,10 @@ for i in range(len(si_scenario_columns)):
     lsi1 = p16.line(x = 'Date', y = str(si_scenario_columns[i]), source = source_si, color = cmap[i], #legend_label=str(si_scenario_columns[i]), 
                     line_width = 2)
     p16.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("Start forecast date", str(si_scenario_columns[i])), ("Infected", "$y{0,000f}")], renderers=[lsi1]))
-p16.circle(x = 'date', y = "n_tot_pos", source = source_db, legend_label= "observed",
+lsi16b = p16.circle(x = 'date', y = "n_tot_pos", source = source_db, legend_label= "observed",
            color="red", size = 8, line_color = "red", alpha = 0.5, line_width = 2)
+p16.add_tools(bkh_mod.HoverTool(tooltips = abs_tooltips, renderers=[lsi16b]))
+
 p16.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0,000")
 p16.legend.label_text_font_size = "9pt"
 p16.background_fill_color ="gainsboro"
@@ -1241,8 +1250,10 @@ for i in range(len(si_scenario_columns)):
 #lsi2c = p17.cross(x = 'Date', y = str(SCENARIO_RANGE[-1]), source = source_si, color = 'gray', 
 #                   legend_label='forecast', size = 8, line_color = "gray", alpha = 0.5, line_width = 2)
 #p17.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("n. observations", str(SCENARIO_RANGE[-1])), ("Infected", "$y{0,000f}")], renderers=[lsi2c]))
-p17.circle(x = 'date', y = "n_tot_pos", source = source_db, legend_label= "observed",
+lsi17b = p17.circle(x = 'date', y = "n_tot_pos", source = source_db, legend_label= "observed",
            color="red", size = 8, line_color = "red", alpha = 0.5, line_width = 2)
+p17.add_tools(bkh_mod.HoverTool(tooltips = abs_tooltips, renderers=[lsi17b]))
+
 p17.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0,000")
 p17.legend.label_text_font_size = "9pt"
 p17.background_fill_color ="gainsboro"
@@ -1273,6 +1284,40 @@ p18.sizing_mode = 'scale_width'
 p18.legend.location = "top_left"
 p18.legend.background_fill_alpha = 0.0
 p18.legend.click_policy="hide"
+
+p18b = bkh_plt.figure(tools = TOOLS_NEW, width=500, #height = 650,
+                    title="SI Model Forecast  (for different start forecast dates)",
+                    #x_axis_label='x', #y_axis_label='y',
+                    x_axis_type='datetime', #y_axis_type = "log"
+                    )
+
+cmap = bkh_pal.inferno(len(si_scenario_columns))
+k = 0
+for i in range(len(si_scenario_columns)):
+    lsi2 = p18b.line(x = 'Date', y = str(si_scenario_columns[i]), source = source_si_diff, color = cmap[i], #legend_label=str(si_scenario_columns[i])+" observations", 
+                    line_width = 2)
+    p18b.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("Start forecast date", str(si_scenario_columns[i])), ("Infected", "$y{0,000f}")], renderers=[lsi2]))
+    #p15.add_tools(bkh_mod.HoverTool(tooltips="This is %s %s" % (country, 'y'), renderers=[lx]))
+    #p15.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("Country", country), ("Confirmed", "$y{0,000f}")], renderers=[lx]))
+    #p15.add_tools(bkh_mod.HoverTool(tooltips = world_ts_tooltips))
+    #k = k + 1
+#lsi2c = p18b.cross(x = 'Date', y = str(SCENARIO_RANGE[-1]), source = source_si, color = 'gray', 
+#                   legend_label='forecast', size = 8, line_color = "gray", alpha = 0.5, line_width = 2)
+#p18b.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("n. observations", str(SCENARIO_RANGE[-1])), ("Infected", "$y{0,000f}")], renderers=[lsi2c]))
+lsi2b = p18b.circle(x = 'date', y = "n_tot_pos_diff", source = source_db, legend_label= "observed",
+           color="red", size = 8, line_color = "red", alpha = 0.5, line_width = 2)
+p18b.add_tools(bkh_mod.HoverTool(tooltips = diff_tooltips, renderers=[lsi2b]))
+
+p18b.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0,000")
+p18b.legend.label_text_font_size = "9pt"
+p18b.background_fill_color ="gainsboro"
+p18b.sizing_mode = 'scale_width'
+p18b.legend.location = "top_left"
+p18b.legend.background_fill_alpha = 0.0
+p18b.legend.click_policy="hide"
+
+
+
 ##############################################################################
 p19 = bkh_plt.figure(tools = TOOLS_NEW, width=500, #height = 650,
                     title="SIR Model Forecast (for different sizes of susceptible population)",
@@ -1407,7 +1452,7 @@ ptab3 = bkh_plt.gridplot([[cover_1, LegClick, LegMeaning], [p07, p08, p09],[Sign
 ptab4 = bkh_plt.gridplot([[cover_1, LegClick, LegMeaning], [p10, p11, p12], [Sign]], toolbar_location = 'left')
 ptab5 = bkh_plt.gridplot([[cover_world], [p13], [Sign]], toolbar_location = 'left')
 ptab6 = bkh_plt.gridplot([[cover_world, LegClick, LegMeaning], [p15, p15b, p14], [Sign]], toolbar_location = 'left')
-ptab7 = bkh_plt.gridplot([[cover_1, LegClick, LegMeaning], [p16, p17, p18], [Sign]], toolbar_location = 'left')
+ptab7 = bkh_plt.gridplot([[cover_1, LegClick, LegMeaning], [p16, p17, p18b], [Sign]], toolbar_location = 'left')
 ptab8 = bkh_plt.gridplot([[cover_1, LegClick, LegMeaning], [p19, p20, p21], [Sign]], toolbar_location = 'left')
 ptabnote = bkh_plt.gridplot([[note_en, note_it]], toolbar_location = 'left')
 
