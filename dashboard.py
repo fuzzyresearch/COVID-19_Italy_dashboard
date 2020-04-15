@@ -7,7 +7,6 @@ Created on Fri Mar  6 09:57:11 2020
 
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import datetime
 from ast import literal_eval
 import math
@@ -377,12 +376,16 @@ for j in range(0,len(list_of_date_italy)-ROLLING_WINDOW_SI+1):
     si_result = pd.merge(si_result, sel_df, how = "left", on = "Date")
 si_scenario_columns = si_result.drop(columns = ["Date"]).columns
 si_result.loc[:, "date_string"] = si_result.Date.map(date2str)
+si_result.loc[:, "max"] = si_result.max(axis = 1)
+si_result.loc[:, "min"] = si_result.min(axis = 1)
 
 si_result_diff = si_result.copy()
 si_result_diff = si_result_diff.reindex(columns = si_scenario_columns)
 si_result_diff = si_result_diff.diff()
 si_result_diff["Date"] = si_result.Date
 si_result_diff.loc[:, "date_string"] = si_result_diff.Date.map(date2str)
+si_result_diff.loc[:, "max"] = si_result_diff.max(axis = 1)
+si_result_diff.loc[:, "min"] = si_result_diff.min(axis = 1)
 
 
 
@@ -492,6 +495,7 @@ sirdf1 = pd.concat([sirdf1, Iox], axis = 1)
 #%% REPORT BOKEH
 
 import bokeh.models as bkh_mod
+from bokeh.models.annotations import Band
 import bokeh.models.widgets as bkh_mod_w
 import bokeh.palettes as bkh_pal
 import bokeh.io as bkh_io
@@ -1209,16 +1213,19 @@ p15b.legend.click_policy="hide"
 ##############################################################################
 
 p16 = bkh_plt.figure(tools = TOOLS_NEW, width=500, #height = 650,
-                    title="SI Model Forecast (for different start forecast dates)",
+                    title="Forecast band of cumulative positive (for different observation rolling window)",
                     #x_axis_label='x', 
                     y_axis_label='Number of infected',
                     x_axis_type='datetime', y_axis_type = "log")
 
 cmap = bkh_pal.inferno(len(si_scenario_columns)) 
-for i in range(len(si_scenario_columns)):
-    lsi1 = p16.line(x = 'Date', y = str(si_scenario_columns[i]), source = source_si, color = cmap[i], #legend_label=str(si_scenario_columns[i]), 
-                    line_width = 2)
-    p16.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("Start forecast date", str(si_scenario_columns[i])), ("Infected", "$y{0,000f}")], renderers=[lsi1]))
+# for i in range(0,len(si_scenario_columns), 5):
+#     lsi1 = p16.line(x = 'Date', y = str(si_scenario_columns[i]), source = source_si, color = cmap[i], #legend_label=str(si_scenario_columns[i]), 
+#                     line_width = 2, alpha = 0.2)
+#     p16.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("Start forecast date", str(si_scenario_columns[i])), ("Infected", "$y{0,000f}")], renderers=[lsi1]))
+lsi1 = Band(base='Date', lower='min', upper='max', source=source_si, level='underlay',
+            fill_alpha=0.2, fill_color='orange')
+p16.add_layout(lsi1)
 lsi16b = p16.circle(x = 'date', y = "n_tot_pos", source = source_db, legend_label= "observed",
            color="red", size = 8, line_color = "red", alpha = 0.5, line_width = 2)
 p16.add_tools(bkh_mod.HoverTool(tooltips = abs_tooltips, renderers=[lsi16b]))
@@ -1232,17 +1239,17 @@ p16.legend.background_fill_alpha = 0.0
 p16.legend.click_policy="hide"
 
 p17 = bkh_plt.figure(tools = TOOLS_NEW, width=500, #height = 650,
-                    title="SI Model Forecast  (for different start forecast dates)",
+                    title="Forecast band of cumulative positive (for different observation rolling windows)",
                     #x_axis_label='x', #y_axis_label='y',
                     x_axis_type='datetime', #y_axis_type = "log"
                     )
 
 cmap = bkh_pal.inferno(len(si_scenario_columns))
 k = 0
-for i in range(len(si_scenario_columns)):
-    lsi2 = p17.line(x = 'Date', y = str(si_scenario_columns[i]), source = source_si, color = cmap[i], #legend_label=str(si_scenario_columns[i])+" observations", 
-                    line_width = 2)
-    p17.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("Start forecast date", str(si_scenario_columns[i])), ("Infected", "$y{0,000f}")], renderers=[lsi2]))
+# for i in range(0,len(si_scenario_columns), 5):
+#     lsi2 = p17.line(x = 'Date', y = str(si_scenario_columns[i]), source = source_si, color = cmap[i], #legend_label=str(si_scenario_columns[i])+" observations", 
+#                     line_width = 2, alpha = 0.5)
+#     p17.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("Start forecast date", str(si_scenario_columns[i])), ("Infected", "$y{0,000f}")], renderers=[lsi2]))
     #p15.add_tools(bkh_mod.HoverTool(tooltips="This is %s %s" % (country, 'y'), renderers=[lx]))
     #p15.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("Country", country), ("Confirmed", "$y{0,000f}")], renderers=[lx]))
     #p15.add_tools(bkh_mod.HoverTool(tooltips = world_ts_tooltips))
@@ -1250,6 +1257,9 @@ for i in range(len(si_scenario_columns)):
 #lsi2c = p17.cross(x = 'Date', y = str(SCENARIO_RANGE[-1]), source = source_si, color = 'gray', 
 #                   legend_label='forecast', size = 8, line_color = "gray", alpha = 0.5, line_width = 2)
 #p17.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("n. observations", str(SCENARIO_RANGE[-1])), ("Infected", "$y{0,000f}")], renderers=[lsi2c]))
+lsi2 = Band(base='Date', lower='min', upper='max', source=source_si, level='underlay',
+            fill_alpha=0.2, fill_color='orange')
+p17.add_layout(lsi2)
 lsi17b = p17.circle(x = 'date', y = "n_tot_pos", source = source_db, legend_label= "observed",
            color="red", size = 8, line_color = "red", alpha = 0.5, line_width = 2)
 p17.add_tools(bkh_mod.HoverTool(tooltips = abs_tooltips, renderers=[lsi17b]))
@@ -1272,7 +1282,7 @@ p18 = bkh_plt.figure(tools = TOOLS_NEW, width=500, #height = 650,
 cmap = bkh_pal.Category20[len(SCENARIO_RANGE)] 
 k = 0
 p18.circle(x = 'date', y = "n_tot_pos", source = source_db, legend_label= "observed",
-           color="magenta", size = 8, line_color = "magenta", alpha = 0.5, line_width = 2)
+           color="magenta", size = 8, line_color = "gray", alpha = 0.5, line_width = 2)
 lsi3 = p18.cross(x = 'Date', y = "y_spike", source = source_si_spike, legend_label= "inflexion",
            color="black", size = 25, line_color = "black", alpha = 0.5, line_width = 2)
 p18.add_tools(bkh_mod.HoverTool( tooltips=[("Exp. Spike date", "@date_string"),  ("Spike value:", "@y_spike{0,000f}"), ("n. observations", "@Scenario")], renderers=[lsi3]))
@@ -1286,24 +1296,25 @@ p18.legend.background_fill_alpha = 0.0
 p18.legend.click_policy="hide"
 
 p18b = bkh_plt.figure(tools = TOOLS_NEW, width=500, #height = 650,
-                    title="SI Model Forecast  (for different start forecast dates)",
+                    title="Forecast band of new daily positives (for different observation rolling windows)",
                     #x_axis_label='x', #y_axis_label='y',
                     x_axis_type='datetime', #y_axis_type = "log"
                     )
 
 cmap = bkh_pal.inferno(len(si_scenario_columns))
 k = 0
-for i in range(len(si_scenario_columns)):
-    lsi2 = p18b.line(x = 'Date', y = str(si_scenario_columns[i]), source = source_si_diff, color = cmap[i], #legend_label=str(si_scenario_columns[i])+" observations", 
-                    line_width = 2)
+for i in range(0,len(si_scenario_columns), 5):
+    lsi2 = p18b.line(x = 'Date', y = str(si_scenario_columns[i]), source = source_si_diff, color = cmap[i], legend_label=str(si_scenario_columns[i]), 
+                    line_width = 2, alpha = 0.5)
     p18b.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("Start forecast date", str(si_scenario_columns[i])), ("Infected", "$y{0,000f}")], renderers=[lsi2]))
-    #p15.add_tools(bkh_mod.HoverTool(tooltips="This is %s %s" % (country, 'y'), renderers=[lx]))
-    #p15.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("Country", country), ("Confirmed", "$y{0,000f}")], renderers=[lx]))
-    #p15.add_tools(bkh_mod.HoverTool(tooltips = world_ts_tooltips))
     #k = k + 1
 #lsi2c = p18b.cross(x = 'Date', y = str(SCENARIO_RANGE[-1]), source = source_si, color = 'gray', 
 #                   legend_label='forecast', size = 8, line_color = "gray", alpha = 0.5, line_width = 2)
 #p18b.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("n. observations", str(SCENARIO_RANGE[-1])), ("Infected", "$y{0,000f}")], renderers=[lsi2c]))
+p18b.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("Start forecast date", str(si_scenario_columns[i])), ("Infected", "$y{0,000f}")], renderers=[lsi2]))
+lsi18b = Band(base='Date', lower='min', upper='max', source=source_si_diff, level='underlay',
+            fill_alpha=0.2, fill_color='orange')
+p18b.add_layout(lsi18b)
 lsi2b = p18b.circle(x = 'date', y = "n_tot_pos_diff", source = source_db, legend_label= "observed",
            color="red", size = 8, line_color = "red", alpha = 0.5, line_width = 2)
 p18b.add_tools(bkh_mod.HoverTool(tooltips = diff_tooltips, renderers=[lsi2b]))
