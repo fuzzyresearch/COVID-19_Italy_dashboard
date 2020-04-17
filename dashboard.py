@@ -370,10 +370,13 @@ for j in range(0,len(list_of_date_italy)-ROLLING_WINDOW_SI+1):
     for i in range(1, FUTURE_TIME_WINDOW+1):
         sel_date = np.append(sel_date, end_date + datetime.timedelta(days=i))
     sel_yori = yori.iloc[j:j+ROLLING_WINDOW_SI]
-    yforec = si(sel_yori, ROLLING_WINDOW_SI+FUTURE_TIME_WINDOW)[1]
-    sel_df = pd.DataFrame(data = yforec, index = sel_date, columns = [str(sel_date[0])])
-    sel_df["Date"] = sel_date
-    si_result = pd.merge(si_result, sel_df, how = "left", on = "Date")
+    try:
+        yforec = si(sel_yori, ROLLING_WINDOW_SI+FUTURE_TIME_WINDOW)[1]
+        sel_df = pd.DataFrame(data = yforec, index = sel_date, columns = [str(sel_date[0])])
+        sel_df["Date"] = sel_date
+        si_result = pd.merge(si_result, sel_df, how = "left", on = "Date")
+    except RuntimeError:
+        pass
 si_scenario_columns = si_result.drop(columns = ["Date"]).columns
 si_result.loc[:, "date_string"] = si_result.Date.map(date2str)
 si_result.loc[:, "max"] = si_result.max(axis = 1)
