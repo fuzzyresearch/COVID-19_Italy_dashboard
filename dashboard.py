@@ -377,6 +377,7 @@ for j in range(0,len(list_of_date_italy)-ROLLING_WINDOW_SI+1):
         si_result = pd.merge(si_result, sel_df, how = "left", on = "Date")
     except RuntimeError:
         pass
+    
 si_scenario_columns = si_result.drop(columns = ["Date"]).columns
 si_result.loc[:, "date_string"] = si_result.Date.map(date2str)
 si_result.loc[:, "max"] = si_result.max(axis = 1)
@@ -415,7 +416,7 @@ spikedf["Scenario"] = SCENARIO_RANGE
 
 ##############################################################################
 
-TIME_WINDOW_SIR = 54    
+TIME_WINDOW_SIR = 100    
 
 Iobs = X_national.loc[:, "n_tot_pos"]
 Robs = X_national.loc[:, "n_recovered"] + X_national.loc[:, "n_dead"]
