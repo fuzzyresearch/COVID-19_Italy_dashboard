@@ -60,6 +60,7 @@ def contain_numbers(inputString):
 
 def raw2dataframe(url):
     db = pd.read_csv(url, sep = ",", error_bad_lines = False)
+    db = db.loc[db.data != 'data']
     db["data"] = db["data"].map(str2date)
     db["date_string"] = db["data"].map(date2str)
     return db
@@ -85,6 +86,9 @@ end = raw2startenddate(url_national)[2]
 dbnat = raw2dataframe(url_national)
 dbreg = raw2dataframe(url_regional)
 dbpro = raw2dataframe(url_province)
+dbpro["lat"] = dbpro["lat"].map(float)
+dbpro["long"] = dbpro["long"].map(float)
+dbpro["totale_casi"] = dbpro["totale_casi"].map(float)
 
 db_national = dbnat.drop(columns = ['note_it', 'note_en'])
 db_regional = dbreg.loc[(dbreg.lat != 0) & (dbreg.long != 0)]
