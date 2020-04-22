@@ -103,11 +103,11 @@ col_national = ['data', 'stato', 'ricoverati_con_sintomi', 'terapia_intensiva',
 
 col_national_mod = ['date', 'state', 'n_hosp_not_ic', 'n_ic', 'n_tot_hosp', 
                     'n_pos_at_home', 'n_tot_pos', 'n_var_tot_pos', 'n_new_pos',      
-                    'n_recovered', 'n_dead', 'n_tot_case', 'n_swab', 'date_string']
+                    'n_recovered', 'n_dead', 'n_tot_case', 'n_swab', 'n_test', 'date_string']
 
 col_national_num = ['n_hosp_not_ic', 'n_ic', 'n_tot_hosp', 'n_pos_at_home', 
                     'n_tot_pos', 'n_var_tot_pos', 'n_new_pos', 'n_recovered', 'n_dead', 
-                    'n_tot_case', 'n_swab']
+                    'n_tot_case', 'n_swab', 'n_test']
 
 col_regional = ['data', 'stato', 'codice_regione', 'denominazione_regione', 'lat',
                 'long', 'ricoverati_con_sintomi', 'terapia_intensiva',
@@ -118,7 +118,7 @@ col_regional = ['data', 'stato', 'codice_regione', 'denominazione_regione', 'lat
 col_regional_mod = ['date', 'state', 'code_reg', 'name_reg', 'lat', 'long', 
                     'n_hosp_not_ic', 'n_ic', 'n_tot_hosp', 'n_pos_at_home', 
                     'n_tot_pos', 'n_var_tot_pos', 'n_new_pos', 'n_recovered', 'n_dead', 
-                    'n_tot_case', 'n_swab', 'date_string']
+                    'n_tot_case', 'n_swab', 'n_test', 'date_string']
 
 col_province = ['data', 'stato', 'codice_regione', 'denominazione_regione',
                 'codice_provincia', 'denominazione_provincia', 'sigla_provincia', 'lat',
@@ -145,12 +145,14 @@ X_province["utm_coord_y"] = X_province["eq_coord"].map(mercy)
 
 #%%
 
-X_national_pct = X_national[col_national_num].pct_change().dropna()
+X_national_pct = X_national[col_national_num].pct_change()
+X_national_pct = X_national_pct.iloc[1:]
 col_national_num_pct = [x+"_pct" for x in col_national_num]
 X_national_pct.columns = col_national_num_pct
 X_national_pct["date_string"] = np.array(X_national["date_string"])[1:]
 
-X_national_diff = X_national[col_national_num].diff().dropna()
+X_national_diff = X_national[col_national_num].diff()
+X_national_diff = X_national_diff.iloc[1:]
 col_national_num_diff = [x+"_diff" for x in col_national_num]
 X_national_diff.columns = col_national_num_diff
 X_national_diff["date_string"] = np.array(X_national["date_string"])[1:]
@@ -194,7 +196,8 @@ X_regional_var.loc[X_regional_var["n_dead"] <=0, "n_var_dead_map"] = 0.5
 X_regional_var.loc[X_regional_var["n_dead"] >0, "n_var_dead_map"] = (np.abs(X_regional_var.loc[X_regional_var["n_dead"] >0,"n_dead"]))**0.6
 
 X_regional_puglia = X_regional.loc[X_regional.name_reg == 'Puglia',:]
-X_regional_puglia_diff = X_regional_puglia[col_national_num].diff().dropna()
+X_regional_puglia_diff = X_regional_puglia[col_national_num].diff()
+X_regional_puglia_diff = X_regional_puglia_diff.iloc[1:]
 col_national_num_diff = [x+"_diff" for x in col_national_num]
 X_regional_puglia_diff.columns = col_national_num_diff
 X_regional_puglia_diff["date_string"] = np.array(X_regional_puglia["date_string"])[1:]
