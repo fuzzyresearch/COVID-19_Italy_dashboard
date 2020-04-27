@@ -428,8 +428,8 @@ TIME_WINDOW_SIR = 100
 Iobs = X_national.loc[:, "n_tot_pos"]
 Robs = X_national.loc[:, "n_recovered"] + X_national.loc[:, "n_dead"]
 Iobs = Iobs-Robs
-min_scenario = Iobs.iloc[-1]*1.01
-max_scenario = Iobs.iloc[-1]*2
+min_scenario = Iobs.iloc[-1]*2
+max_scenario = Iobs.iloc[-1]*20
 list_of_scenarios0 = np.arange(min_scenario, max_scenario, (max_scenario-min_scenario)/15)
 list_of_scenarios0 = np.array(list(map(int, list_of_scenarios0)))
 def deriv(y, t, N, beta, gamma):
@@ -1360,7 +1360,7 @@ p19.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0,000")
 p19.legend.label_text_font_size = "9pt"
 p19.background_fill_color ="gainsboro"
 p19.sizing_mode = 'scale_width'
-p19.legend.location = "bottom_right"
+p19.legend.location = "top_left"
 p19.legend.background_fill_alpha = 0.0
 p19.legend.click_policy="hide"
 
