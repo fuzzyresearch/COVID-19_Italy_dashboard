@@ -367,7 +367,7 @@ for i in range(1, FUTURE_TIME_WINDOW):
 
 all_dates = sum([list_of_date_italy, remaining_list_of_date], [])
 
-yori = X_national.loc[:, "n_tot_pos"]
+yori = X_national.loc[:, "n_tot_case"]
 
 si_result = pd.DataFrame(data = all_dates, columns = ["Date"])
 si_result["Date"] = all_dates
@@ -400,26 +400,26 @@ si_result_diff.loc[:, "min"] = si_result_diff.min(axis = 1)
 
 
 
-TIME_WINDOW_SI = 60
-yori = X_national.loc[:, "n_tot_pos"]
+# TIME_WINDOW_SI = 60
+# yori = X_national.loc[:, "n_tot_case"]
 SCENARIO_RANGE = np.array(range(len(yori)-10,len(yori)))
-newdate = []
-for i in range(TIME_WINDOW_SI):
-    newdate.append(start + datetime.timedelta(days=i))
-newdate = np.array(newdate)
+# newdate = []
+# for i in range(TIME_WINDOW_SI):
+#     newdate.append(start + datetime.timedelta(days=i))
+# newdate = np.array(newdate)
 
-ynew = []
-spike_x_list = []
-spike_y_list = []
+# ynew = []
+# spike_x_list = []
+# spike_y_list = []
   
-for m in SCENARIO_RANGE:
-    i2 = si(yori.iloc[0:m], TIME_WINDOW_SI)[1]
-    pos_spike = np.where(np.diff(np.sign(np.gradient(np.gradient(i2)))))
-    spike_x_list.append(pos_spike[0][0])
-    spike_y_list.append(round(i2[pos_spike][0],0))
-spikedf = pd.DataFrame({'Date': newdate[spike_x_list], 'x_spike': spike_x_list, 'y_spike': spike_y_list})
-spikedf.loc[:, "date_string"] = spikedf.Date.map(date2str)
-spikedf["Scenario"] = SCENARIO_RANGE
+# for m in SCENARIO_RANGE:
+#     i2 = si(yori.iloc[0:m], TIME_WINDOW_SI)[1]
+#     pos_spike = np.where(np.diff(np.sign(np.gradient(np.gradient(i2)))))
+#     spike_x_list.append(pos_spike[0][0])
+#     spike_y_list.append(round(i2[pos_spike][0],0))
+# spikedf = pd.DataFrame({'Date': newdate[spike_x_list], 'x_spike': spike_x_list, 'y_spike': spike_y_list})
+# spikedf.loc[:, "date_string"] = spikedf.Date.map(date2str)
+# spikedf["Scenario"] = SCENARIO_RANGE
 
 ##############################################################################
 
@@ -427,10 +427,10 @@ TIME_WINDOW_SIR = 100
 
 Iobs = X_national.loc[:, "n_tot_pos"]
 Robs = X_national.loc[:, "n_recovered"] + X_national.loc[:, "n_dead"]
-Iobs = Iobs-Robs
-min_scenario = Iobs.iloc[-1]*2
-max_scenario = Iobs.iloc[-1]*20
-list_of_scenarios0 = np.arange(min_scenario, max_scenario, (max_scenario-min_scenario)/15)
+#Iobs = Iobs-Robs
+min_scenario = Iobs.iloc[-1]*1.5
+max_scenario = Iobs.iloc[-1]*10
+list_of_scenarios0 = np.arange(min_scenario, max_scenario, (max_scenario-min_scenario)/10)
 list_of_scenarios0 = np.array(list(map(int, list_of_scenarios0)))
 def deriv(y, t, N, beta, gamma):
     S, I, R = y
@@ -600,7 +600,7 @@ source_db_world_death_ts = bkh_mod.ColumnDataSource(data = X_death_world_time_se
 source_db_world_doubling = bkh_mod.ColumnDataSource(data = X_conf_world_doubling)
 
 source_si = bkh_mod.ColumnDataSource(data = si_result)
-source_si_spike = bkh_mod.ColumnDataSource(data = spikedf)
+#source_si_spike = bkh_mod.ColumnDataSource(data = spikedf)
 source_si_diff = bkh_mod.ColumnDataSource(data = si_result_diff)
 source_sir0 = bkh_mod.ColumnDataSource(data = sirdf0)
 source_sir1 = bkh_mod.ColumnDataSource(data = sirdf1)
@@ -1224,7 +1224,7 @@ p15b.legend.click_policy="hide"
 ##############################################################################
 
 p16 = bkh_plt.figure(tools = TOOLS_NEW, width=500, #height = 650,
-                    title="Forecast band of cumulative positive (for different observation rolling window)",
+                    title="Forecast band of total cases (for different observation rolling window)",
                     #x_axis_label='x', 
                     y_axis_label='Number of infected',
                     x_axis_type='datetime', y_axis_type = "log")
@@ -1237,7 +1237,7 @@ cmap = bkh_pal.inferno(len(si_scenario_columns))
 lsi1 = Band(base='Date', lower='min', upper='max', source=source_si, level='underlay',
             fill_alpha=0.2, fill_color='orange')
 p16.add_layout(lsi1)
-lsi16b = p16.circle(x = 'date', y = "n_tot_pos", source = source_db, legend_label= "observed",
+lsi16b = p16.circle(x = 'date', y = "n_tot_case", source = source_db, legend_label= "observed",
            color="red", size = 8, line_color = "red", alpha = 0.5, line_width = 2)
 p16.add_tools(bkh_mod.HoverTool(tooltips = abs_tooltips, renderers=[lsi16b]))
 
@@ -1250,7 +1250,7 @@ p16.legend.background_fill_alpha = 0.0
 p16.legend.click_policy="hide"
 
 p17 = bkh_plt.figure(tools = TOOLS_NEW, width=500, #height = 650,
-                    title="Forecast band of cumulative positive (for different observation rolling windows)",
+                    title="Forecast band of total cases (for different observation rolling windows)",
                     #x_axis_label='x', #y_axis_label='y',
                     x_axis_type='datetime', #y_axis_type = "log"
                     )
@@ -1271,7 +1271,7 @@ k = 0
 lsi2 = Band(base='Date', lower='min', upper='max', source=source_si, level='underlay',
             fill_alpha=0.2, fill_color='orange')
 p17.add_layout(lsi2)
-lsi17b = p17.circle(x = 'date', y = "n_tot_pos", source = source_db, legend_label= "observed",
+lsi17b = p17.circle(x = 'date', y = "n_tot_case", source = source_db, legend_label= "observed",
            color="red", size = 8, line_color = "red", alpha = 0.5, line_width = 2)
 p17.add_tools(bkh_mod.HoverTool(tooltips = abs_tooltips, renderers=[lsi17b]))
 
@@ -1283,32 +1283,33 @@ p17.legend.location = "top_left"
 p17.legend.background_fill_alpha = 0.0
 p17.legend.click_policy="hide"
 
-p18 = bkh_plt.figure(tools = TOOLS_NEW, width=500, #height = 650,
-                    title=" Expected inflexion points for different size of observations",
-                    #x_axis_label='x', #y_axis_label='y',
-                    #y_range=(source_si_spike.data["y_spike"].min(), source_si_spike.data["y_spike"].max()),
-                    x_axis_type='datetime', #y_axis_type = "log"
-                    )
+# p18 = bkh_plt.figure(tools = TOOLS_NEW, width=500, #height = 650,
+#                     title=" Expected inflexion points for different size of observations",
+#                     #x_axis_label='x', #y_axis_label='y',
+#                     #y_range=(0, source_si_spike.data["y_spike"].max()),
+#                     x_axis_type='datetime', #y_axis_type = "log"
+#                     )
 
-cmap = bkh_pal.Category20[len(SCENARIO_RANGE)] 
-k = 0
-p18.circle(x = 'date', y = "n_tot_pos", source = source_db, legend_label= "observed",
-           color="magenta", size = 8, line_color = "gray", alpha = 0.5, line_width = 2)
-lsi3 = p18.cross(x = 'Date', y = "y_spike", source = source_si_spike, legend_label= "inflexion",
-           color="black", size = 25, line_color = "black", alpha = 0.5, line_width = 2)
-p18.add_tools(bkh_mod.HoverTool( tooltips=[("Exp. Spike date", "@date_string"),  ("Spike value:", "@y_spike{0,000f}"), ("n. observations", "@Scenario")], renderers=[lsi3]))
-p18.diamond(x = 'Date', y = str(si_scenario_columns[-1]), source = source_si, color = "blue", legend_label=str(si_scenario_columns[-1])+ " observations", size = 8, alpha = 0.75, line_width = 2)
-p18.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0,000")
-p18.legend.label_text_font_size = "9pt"
-p18.background_fill_color ="gainsboro"
-p18.sizing_mode = 'scale_width'
-p18.legend.location = "top_left"
-p18.legend.background_fill_alpha = 0.0
-p18.legend.click_policy="hide"
+# cmap = bkh_pal.Category20[len(SCENARIO_RANGE)] 
+# k = 0
+# p18.circle(x = 'date', y = "n_tot_pos", source = source_db, legend_label= "observed",
+#            color="magenta", size = 8, line_color = "gray", alpha = 0.5, line_width = 2)
+# lsi3 = p18.cross(x = 'Date', y = "y_spike", source = source_si_spike, legend_label= "inflexion",
+#            color="black", size = 25, line_color = "black", alpha = 0.5, line_width = 2)
+# p18.add_tools(bkh_mod.HoverTool( tooltips=[("Exp. Spike date", "@date_string"),  ("Spike value:", "@y_spike{0,000f}"), ("n. observations", "@Scenario")], renderers=[lsi3]))
+# p18.diamond(x = 'Date', y = str(si_scenario_columns[-1]), source = source_si, color = "blue", legend_label=str(si_scenario_columns[-1])+ " observations", size = 8, alpha = 0.75, line_width = 2)
+# p18.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0,000")
+# p18.legend.label_text_font_size = "9pt"
+# p18.background_fill_color ="gainsboro"
+# p18.sizing_mode = 'scale_width'
+# p18.legend.location = "top_left"
+# p18.legend.background_fill_alpha = 0.0
+# p18.legend.click_policy="hide"
 
 p18b = bkh_plt.figure(tools = TOOLS_NEW, width=500, #height = 650,
-                    title="Forecast band of new daily positives (for different observation rolling windows)",
+                    title="Forecast band of new positives (for different observation rolling windows)",
                     #x_axis_label='x', #y_axis_label='y',
+                    #y_range = (0, si_result_diff["max"].max()),
                     x_axis_type='datetime', #y_axis_type = "log"
                     )
 
@@ -1326,7 +1327,7 @@ p18b.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("Start f
 lsi18b = Band(base='Date', lower='min', upper='max', source=source_si_diff, level='underlay',
             fill_alpha=0.2, fill_color='orange')
 p18b.add_layout(lsi18b)
-lsi2b = p18b.circle(x = 'date', y = "n_tot_pos_diff", source = source_db, legend_label= "observed",
+lsi2b = p18b.circle(x = 'date', y = "n_new_pos", source = source_db, legend_label= "observed",
            color="red", size = 8, line_color = "red", alpha = 0.5, line_width = 2)
 p18b.add_tools(bkh_mod.HoverTool(tooltips = diff_tooltips, renderers=[lsi2b]))
 
