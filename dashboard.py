@@ -423,7 +423,7 @@ SCENARIO_RANGE = np.array(range(len(yori)-10,len(yori)))
 
 ##############################################################################
 
-TIME_WINDOW_SIR = 100    
+TIME_WINDOW_SIR = 200    
 
 Iobs = X_national.loc[:, "n_tot_pos"]
 Robs = X_national.loc[:, "n_recovered"] + X_national.loc[:, "n_dead"]
@@ -1356,7 +1356,7 @@ for i in range(len(list_of_scenarios0)):
     p19.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("Population Size", str(list_of_scenarios0[i])), ("Infected", "$y{0,000f}")], renderers=[lsi4]))
 lsi4b = p19.circle(x = 'Date', y = "n_tot_pos", source = source_sir0, legend_label= "observed",
            color="red", size = 8, line_color = "red", alpha = 0.5, line_width = 2)
-p19.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"), ("Positives without removed", "$y{0,000f}")], renderers=[lsi4b]))
+p19.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"), ("Positives", "$y{0,000f}")], renderers=[lsi4b]))
 p19.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0,000")
 p19.legend.label_text_font_size = "9pt"
 p19.background_fill_color ="gainsboro"
@@ -1378,7 +1378,7 @@ for i in range(len(list_of_scenarios0)):
     p20.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("Population Size", str(list_of_scenarios0[i])), ("Infected", "$y{0,000f}")], renderers=[lsi5]))
 lsi5b = p20.circle(x = 'Date', y = "n_tot_pos", source = source_sir0, legend_label= "observed",
            color="red", size = 8, line_color = "red", alpha = 0.5, line_width = 2)
-p20.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"), ("Positives without removed", "$y{0,000f}")], renderers=[lsi5b]))
+p20.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"), ("Positives", "$y{0,000f}")], renderers=[lsi5b]))
 p20.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0,000")
 p20.legend.label_text_font_size = "9pt"
 p20.background_fill_color ="gainsboro"
@@ -1400,7 +1400,7 @@ for i in range(len(list_of_scenarios1)):
     p21.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("Population Size", str(list_of_scenarios1[i])), ("Infected", "$y{0,000f}")], renderers=[lsi6]))
 lsi6b = p21.circle(x = 'Date', y = "n_tot_pos", source = source_sir1, legend_label= "observed",
            color="red", size = 8, line_color = "red", alpha = 0.5, line_width = 2)
-p21.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"), ("Positives without removed", "$y{0,000f}")], renderers=[lsi6b]))
+p21.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"), ("Positives", "$y{0,000f}")], renderers=[lsi6b]))
 #p21.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0,000.00")
 p21.legend.label_text_font_size = "9pt"
 p21.background_fill_color ="gainsboro"
