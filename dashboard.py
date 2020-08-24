@@ -12,6 +12,7 @@ from ast import literal_eval
 import math
 from numpy import inf
 
+
 def num2str0(x):
     if x > 9:
         return(str(x))
@@ -21,8 +22,10 @@ def num2str0(x):
 def date2str(x):
     return(str(x.year)+num2str0(x.month)+num2str0(x.day))
 
+
 def date2strWHO(x):
     return(str(x.month)+'/'+str(x.day)+'/'+str(x.year)[-2:])
+
 
 def str2date(x):
     if "-" in x:    
@@ -30,10 +33,12 @@ def str2date(x):
     else:
         return datetime.date(int(x[0:4]),int(x[4:6]), int(x[6:8])) 
 
+
 def doublingtime(x):
     ratio = x.pct_change()+1
     lnratio = np.log(ratio)
     return  np.log(2)/lnratio
+  
     
 def merc(Coords):
 	Coords = literal_eval(Coords)
@@ -45,15 +50,18 @@ def merc(Coords):
 	y = 180.0/math.pi * math.log(math.tan(math.pi/4.0 + lat * (math.pi/180.0)/2.0)) * scale
 	return x,y
 
+
 mercx = lambda x: merc(x)[0]
 mercy = lambda x: merc(x)[1]
+
 
 def zerolog(x):
     if x == 0:
         return 0
     else:
         return np.log(x)
-    
+ 
+
 def contain_numbers(inputString):
     return any(char.isdigit() for char in inputString)
 
@@ -64,6 +72,7 @@ def raw2dataframe(url):
     db["data"] = db["data"].map(str2date)
     db["date_string"] = db["data"].map(date2str)
     return db
+
 
 def raw2startenddate(url):
     db = pd.read_csv(url, sep = ",", error_bad_lines = False)
@@ -90,35 +99,50 @@ dbpro["lat"] = dbpro["lat"].map(float)
 dbpro["long"] = dbpro["long"].map(float)
 dbpro["totale_casi"] = dbpro["totale_casi"].map(float)
 
-db_national = dbnat.drop(columns = ['note_it', 'note_en'])
+db_national = dbnat.drop(columns = ['note'])
+db_national = db_national.fillna(0.0, inplace = False)
 db_regional = dbreg.loc[(dbreg.lat != 0) & (dbreg.long != 0)]
-db_regional = db_regional.drop(columns = ['note_it', 'note_en'])
+db_regional = db_regional.drop(columns = ['note'])
+db_regional = db_regional.fillna(0.0, inplace = False)
 db_province = dbpro.loc[(dbpro.lat != 0) & (dbpro.long != 0)]
-db_province = db_province.drop(columns = ['note_it', 'note_en'])
+db_province = db_province.drop(columns = ['note'])
+db_province = db_province.dropna(axis = 0)
 
 col_national = ['data', 'stato', 'ricoverati_con_sintomi', 'terapia_intensiva',
-       'totale_ospedalizzati', 'isolamento_domiciliare',
-       'totale_positivi', 'variazione_totale_positivi', 'nuovi_positivi',
-       'dimessi_guariti', 'deceduti', 'totale_casi', 'tamponi', 'date_string']
+       'totale_ospedalizzati', 'isolamento_domiciliare', 'totale_positivi',
+       'variazione_totale_positivi', 'nuovi_positivi', 'dimessi_guariti',
+       'deceduti', 'casi_da_sospetto_diagnostico', 'casi_da_screening',
+       'totale_casi', 'tamponi', 'casi_testati', 'date_string']
 
 col_national_mod = ['date', 'state', 'n_hosp_not_ic', 'n_ic', 'n_tot_hosp', 
                     'n_pos_at_home', 'n_tot_pos', 'n_var_tot_pos', 'n_new_pos',      
-                    'n_recovered', 'n_dead', 'n_tot_case', 'n_swab', 'n_test', 'date_string']
+                    'n_recovered', 'n_dead', 
+                    'n_case_susp', 'n_case_screen',
+                    'n_tot_case', 'n_swab', 'n_test', 'date_string']
+
 
 col_national_num = ['n_hosp_not_ic', 'n_ic', 'n_tot_hosp', 'n_pos_at_home', 
-                    'n_tot_pos', 'n_var_tot_pos', 'n_new_pos', 'n_recovered', 'n_dead', 
+                    'n_tot_pos', 'n_var_tot_pos', 'n_new_pos', 'n_recovered', 'n_dead',
+                    'n_case_susp', 'n_case_screen',
                     'n_tot_case', 'n_swab', 'n_test']
 
-col_regional = ['data', 'stato', 'codice_regione', 'denominazione_regione', 'lat',
-                'long', 'ricoverati_con_sintomi', 'terapia_intensiva',
-                'totale_ospedalizzati', 'isolamento_domiciliare',
-                'totale_positivi', 'variazione_totale_positivi', 'nuovi_positivi',
-                'dimessi_guariti', 'deceduti', 'totale_casi', 'tamponi', 'date_string']
 
-col_regional_mod = ['date', 'state', 'code_reg', 'name_reg', 'lat', 'long', 
-                    'n_hosp_not_ic', 'n_ic', 'n_tot_hosp', 'n_pos_at_home', 
-                    'n_tot_pos', 'n_var_tot_pos', 'n_new_pos', 'n_recovered', 'n_dead', 
+col_regional = ['data', 'stato', 'codice_regione', 'denominazione_regione', 'lat',
+       'long', 'ricoverati_con_sintomi', 'terapia_intensiva',
+       'totale_ospedalizzati', 'isolamento_domiciliare', 'totale_positivi',
+       'variazione_totale_positivi', 'nuovi_positivi', 'dimessi_guariti',
+       'deceduti', 'casi_da_sospetto_diagnostico', 'casi_da_screening',
+       'totale_casi', 'tamponi', 'casi_testati', 'note', 'date_string']
+
+
+col_regional_mod = ['date', 'state', 'code_reg', 'name_reg', 'lat',
+                    'long', 
+                    'n_hosp_not_ic', 'n_ic', 'n_tot_hosp', 
+                    'n_pos_at_home', 'n_tot_pos', 'n_var_tot_pos', 'n_new_pos',      
+                    'n_recovered', 'n_dead', 
+                    'n_case_susp', 'n_case_screen',
                     'n_tot_case', 'n_swab', 'n_test', 'date_string']
+
 
 col_province = ['data', 'stato', 'codice_regione', 'denominazione_regione',
                 'codice_provincia', 'denominazione_provincia', 'sigla_provincia', 'lat',
@@ -157,17 +181,17 @@ col_national_num_diff = [x+"_diff" for x in col_national_num]
 X_national_diff.columns = col_national_num_diff
 X_national_diff["date_string"] = np.array(X_national["date_string"])[1:]
 
-pos_over_swab = X_national.n_tot_pos/X_national.n_swab
+pos_over_swab = X_national_diff.n_tot_case_diff/X_national_diff.n_swab_diff
 hosp_over_pos = X_national.n_tot_hosp/X_national.n_tot_pos
-rec_over_pos = X_national.n_recovered/X_national.n_tot_pos
+rec_over_cases = X_national.n_recovered/X_national.n_tot_case
 ic_over_pos = X_national.n_ic/X_national.n_tot_pos
-dead_over_pos = X_national.n_dead/X_national.n_tot_pos
+dead_over_cases = X_national.n_dead/X_national.n_tot_case
 
 X_national_frac = pd.DataFrame(dict(pos_over_swab = pos_over_swab,
                   hosp_over_pos = hosp_over_pos,
-                  rec_over_pos = rec_over_pos,
+                  rec_over_cases = rec_over_cases,
                   ic_over_pos = ic_over_pos, 
-                  dead_over_pos = dead_over_pos))
+                  dead_over_cases = dead_over_cases))
 
 X_national_frac["date_string"] = np.array(X_national["date_string"])
 X_national_2 = pd.merge(X_national, X_national_frac, how = 'left', on = 'date_string')
@@ -203,17 +227,17 @@ X_regional_puglia_diff.columns = col_national_num_diff
 X_regional_puglia_diff["date_string"] = np.array(X_regional_puglia["date_string"])[1:]
 X_regional_puglia_2 = pd.merge(X_regional_puglia, X_regional_puglia_diff, how = 'left', on = 'date_string')
 
-pos_over_swab_puglia = X_regional_puglia_2.n_tot_pos/X_regional_puglia_2.n_swab
+pos_over_swab_puglia = X_regional_puglia_2.n_new_pos/X_regional_puglia_2.n_swab_diff
 hosp_over_pos_puglia = X_regional_puglia_2.n_tot_hosp/X_regional_puglia_2.n_tot_pos
-rec_over_pos_puglia = X_regional_puglia_2.n_recovered/X_regional_puglia_2.n_tot_pos
+rec_over_cases_puglia = X_regional_puglia_2.n_recovered/X_regional_puglia_2.n_tot_case
 ic_over_pos_puglia = X_regional_puglia_2.n_ic/X_regional_puglia_2.n_tot_pos
-dead_over_pos_puglia = X_regional_puglia_2.n_dead/X_regional_puglia_2.n_tot_pos
+dead_over_cases_puglia = X_regional_puglia_2.n_dead/X_regional_puglia_2.n_tot_case
 
 X_regional_puglia_2_frac = pd.DataFrame(dict(pos_over_swab = pos_over_swab_puglia,
                   hosp_over_pos = hosp_over_pos_puglia,
-                  rec_over_pos = rec_over_pos_puglia,
+                  rec_over_cases = rec_over_cases_puglia,
                   ic_over_pos = ic_over_pos_puglia, 
-                  dead_over_pos = dead_over_pos_puglia))
+                  dead_over_cases = dead_over_cases_puglia))
 
 X_regional_puglia_2_frac["date_string"] = np.array(X_national["date_string"])
 X_regional_puglia_3 = pd.merge(X_regional_puglia_2, X_regional_puglia_2_frac, how = 'left', on = 'date_string')
@@ -358,8 +382,9 @@ def si(y, future_time_window):
     return Iest, Inew
 
 
-ROLLING_WINDOW_SI = 25
-FUTURE_TIME_WINDOW = 40
+ROLLING_WINDOW_SI = 10
+FUTURE_TIME_WINDOW = 30
+STARTING_TIME = 90
 
 remaining_list_of_date = []
 for i in range(1, FUTURE_TIME_WINDOW):
@@ -371,7 +396,7 @@ yori = X_national.loc[:, "n_tot_case"]
 
 si_result = pd.DataFrame(data = all_dates, columns = ["Date"])
 si_result["Date"] = all_dates
-for j in range(0,len(list_of_date_italy)-ROLLING_WINDOW_SI+1):
+for j in range(STARTING_TIME,len(list_of_date_italy)-ROLLING_WINDOW_SI+1):
     sel_date = list_of_date_italy[j:j+ROLLING_WINDOW_SI]
     end_date = sel_date[-1]
     for i in range(1, FUTURE_TIME_WINDOW+1):
@@ -538,8 +563,8 @@ pct_tooltips = [('Date', '@date_string'), ('Var.% Swabs', '@n_swab_pct{%0.2%}'),
                     ('Var.% Infected', '@n_tot_pos_pct{%0.2%}'), ('Var.% IC', '@n_ic_pct{%0.2%}'),
                     ('Var. Recovered', '@n_recovered_pct{%0.2%}'), ('Var.% Deaths', '@n_dead_pct{%0.2%}')]
 frac_tooltips = [('Date', '@date_string'), ('Infected/Swabs', '@pos_over_swab{%0.2%}'), 
-                    ('Hosp/Infected', '@hosp_over_pos{%0.2%}'), ('Recovered/Infected', '@rec_over_pos{%0.2%}'),
-                    ('IC/Infected', '@ic_over_pos{%0.2%}'), ('Deaths/Infected', '@dead_over_pos{%0.2%}')]
+                    ('Hosp/Infected', '@hosp_over_pos{%0.2%}'), ('Recovered/Cases', '@rec_over_cases{%0.2%}'),
+                    ('IC/Infected', '@ic_over_pos{%0.2%}'), ('Deaths/Cases', '@dead_over_cases{%0.2%}')]
 reg_tooltips = [('Date', '@date_string'), ('Region', '@name_reg'), 
                 ('Swabs', '@n_swab'),
                     ('Cases', '@n_tot_case'), 
@@ -714,17 +739,17 @@ p02.circle(x = 'date', y = 'hosp_over_pos', source = source_db, legend_label="Ho
           color="orange", size = 10, fill_alpha = 0.5, line_color = 'orange', line_width = 2)
 p02.line(x = 'date', y = 'hosp_over_pos', source = source_db, legend_label="Hospit/Positives",
           color="orange", line_color = 'orange', line_width = 2)
-p02.circle(x = 'date', y = 'rec_over_pos', source = source_db, legend_label="Recovered/Positives",
+p02.circle(x = 'date', y = 'rec_over_cases', source = source_db, legend_label="Recovered/Cases",
           color="green", size = 10, fill_alpha = 0.5, line_color = 'green', line_width = 2)
-p02.line(x = 'date', y = 'rec_over_pos', source = source_db, legend_label="Recovered/Positives",
+p02.line(x = 'date', y = 'rec_over_cases', source = source_db, legend_label="Recovered/Cases",
           color="green", line_color = 'green', line_width = 2)
 p02.circle(x = 'date', y = 'ic_over_pos', source = source_db, legend_label="IC/Positives",
           color="purple", size = 10, fill_alpha = 0.5, line_color = 'purple', line_width = 2)
 p02.line(x = 'date', y = 'ic_over_pos', source = source_db, legend_label="IC/Positives",
           color="purple", line_color = 'purple', line_width = 2)
-p02.circle(x = 'date', y = 'dead_over_pos', source = source_db, legend_label="Deaths/Positives",
+p02.circle(x = 'date', y = 'dead_over_cases', source = source_db, legend_label="Deaths/Cases",
           color="black", size = 10, fill_alpha = 0.5, line_color = 'black', line_width = 2)
-p02.line(x = 'date', y = 'dead_over_pos', source = source_db, legend_label="Deaths/Positives",
+p02.line(x = 'date', y = 'dead_over_cases', source = source_db, legend_label="Deaths/Cases",
           color="black", line_color = 'black', line_width = 2)
 
 p02.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0.0%")
@@ -982,17 +1007,17 @@ p09.circle(x = 'date', y = 'hosp_over_pos', source = source_db_reg_puglia, legen
           color="orange", size = 10, fill_alpha = 0.5, line_color = 'orange', line_width = 2)
 p09.line(x = 'date', y = 'hosp_over_pos', source = source_db_reg_puglia, legend_label="Hospit/Positives",
           color="orange", line_color = 'orange', line_width = 2)
-p09.circle(x = 'date', y = 'rec_over_pos', source = source_db_reg_puglia, legend_label="Recovered/Positives",
+p09.circle(x = 'date', y = 'rec_over_cases', source = source_db_reg_puglia, legend_label="Recovered/Cases",
           color="green", size = 10, fill_alpha = 0.5, line_color = 'green', line_width = 2)
-p09.line(x = 'date', y = 'rec_over_pos', source = source_db_reg_puglia, legend_label="Recovered/Positives",
+p09.line(x = 'date', y = 'rec_over_cases', source = source_db_reg_puglia, legend_label="Recovered/Cases",
           color="green", line_color = 'green', line_width = 2)
 p09.circle(x = 'date', y = 'ic_over_pos', source = source_db_reg_puglia, legend_label="IC/Positives",
           color="purple", size = 10, fill_alpha = 0.5, line_color = 'purple', line_width = 2)
 p09.line(x = 'date', y = 'ic_over_pos', source = source_db_reg_puglia, legend_label="IC/Positives",
           color="purple", line_color = 'purple', line_width = 2)
-p09.circle(x = 'date', y = 'dead_over_pos', source = source_db_reg_puglia, legend_label="Deaths/Positives",
+p09.circle(x = 'date', y = 'dead_over_cases', source = source_db_reg_puglia, legend_label="Deaths/Cases",
           color="black", size = 10, fill_alpha = 0.5, line_color = 'black', line_width = 2)
-p09.line(x = 'date', y = 'dead_over_pos', source = source_db_reg_puglia, legend_label="Deaths/Positives",
+p09.line(x = 'date', y = 'dead_over_cases', source = source_db_reg_puglia, legend_label="Deaths/Cases",
           color="black", line_color = 'black', line_width = 2)
 
 p09.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0.0%")
