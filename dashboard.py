@@ -688,33 +688,33 @@ p01 = bkh_plt.figure(tools = TOOLS_NEW, #width=500, #height=350,
                     #x_axis_label='x', #y_axis_label='y',
                     x_axis_type='datetime', y_axis_type="log")
 p01.line(x = 'date', y = 'n_swab', source = source_db, legend_label="Swabs",
-           color="blue", line_color = 'blue', alpha = 1, line_width = 2)
+           color="blue", line_color = 'blue', alpha = 1, line_width = 3)
 p01.line(x = 'date', y = 'n_tot_case', source = source_db, legend_label="Cases",
-          color="magenta", line_color = 'magenta', alpha = 1, line_width = 2)
+          color="magenta", line_color = 'magenta', alpha = 1, line_width = 3)
 p01.line(x = 'date', y = 'n_tot_pos', source = source_db, legend_label="Positives",
-          color="red", line_color = 'red', alpha = 1, line_width = 2)
+          color="red", line_color = 'red', alpha = 1, line_width = 3)
 p01.line(x = 'date', y = 'n_tot_hosp', source = source_db, legend_label="Hospitalized",
-          color="orange", line_color = 'orange', alpha = 1, line_width = 2)
+          color="orange", line_color = 'orange', alpha = 1, line_width = 3)
 p01.line(x = 'date', y = 'n_recovered', source = source_db, legend_label="Recovered",
-          color="green", line_color = 'green', alpha = 1, line_width = 2)
+          color="green", line_color = 'green', alpha = 1, line_width = 3)
 p01.line(x = 'date', y = 'n_ic', source = source_db, legend_label="IC",
-          color="purple", line_color = 'purple', alpha = 1, line_width = 2)
-p01.line(x = 'date', y = 'n_dead', source = source_db, legend_label="Deaths",
-          color="black", line_color = 'black', alpha = 1, line_width = 2)
-p01.circle(x = 'date', y = 'n_swab', source = source_db, legend_label="Swabs",
-          color="blue", size = 10, fill_alpha = 0.5, line_color = 'blue')
-p01.circle(x = 'date', y = 'n_tot_case', source = source_db, legend_label="Cases",
-          color="magenta", size = 10, line_color = 'magenta', alpha = 0.5, line_width = 2)
-p01.circle(x = 'date', y = 'n_tot_pos', source = source_db, legend_label="Positives",
-          color="red", size = 10, line_color = 'red', alpha = 0.5, line_width = 2)
-p01.circle(x = 'date', y = 'n_tot_hosp', source = source_db, legend_label="Hospitalized",
-          color="orange", size = 10, line_color = 'orange', alpha = 0.5, line_width = 2)
-p01.circle(x = 'date', y = 'n_recovered', source = source_db, legend_label="Recovered",
-          color="green", size = 10, line_color = 'green', alpha = 0.5, line_width = 2)
-p01.circle(x = 'date', y = 'n_ic', source = source_db, legend_label="IC",
-          color="purple", size = 10, line_color = 'purple', alpha = 0.5, line_width = 2)
-p01.circle(x = 'date', y = 'n_dead', source = source_db, legend_label="Deaths",
-          color="black", size = 10, line_color = 'black', alpha = 0.5, line_width = 2)
+          color="purple", line_color = 'purple', alpha = 1, line_width = 3)
+# p01.line(x = 'date', y = 'n_dead', source = source_db, legend_label="Deaths",
+#           color="black", line_color = 'black', alpha = 1, line_width = 2)
+# p01.circle(x = 'date', y = 'n_swab', source = source_db, legend_label="Swabs",
+#           color="blue", size = 10, fill_alpha = 0.5, line_color = 'blue')
+# p01.circle(x = 'date', y = 'n_tot_case', source = source_db, legend_label="Cases",
+#           color="magenta", size = 10, line_color = 'magenta', alpha = 0.5, line_width = 2)
+# p01.circle(x = 'date', y = 'n_tot_pos', source = source_db, legend_label="Positives",
+#           color="red", size = 10, line_color = 'red', alpha = 0.5, line_width = 2)
+# p01.circle(x = 'date', y = 'n_tot_hosp', source = source_db, legend_label="Hospitalized",
+#           color="orange", size = 10, line_color = 'orange', alpha = 0.5, line_width = 2)
+# p01.circle(x = 'date', y = 'n_recovered', source = source_db, legend_label="Recovered",
+#           color="green", size = 10, line_color = 'green', alpha = 0.5, line_width = 2)
+# p01.circle(x = 'date', y = 'n_ic', source = source_db, legend_label="IC",
+#           color="purple", size = 10, line_color = 'purple', alpha = 0.5, line_width = 2)
+# p01.circle(x = 'date', y = 'n_dead', source = source_db, legend_label="Deaths",
+#           color="black", size = 10, line_color = 'black', alpha = 0.5, line_width = 2)
 
 
 p01.background_fill_color ="gainsboro"
@@ -731,26 +731,26 @@ p02 = bkh_plt.figure(tools = TOOLS_NEW, #width=500, #height=350,
                     title="Trend of proportions for Italy",
                     #x_axis_label='x', #y_axis_label='y',
                     x_axis_type='datetime')
-p02.circle(x = 'date', y = 'pos_over_swab', source = source_db, legend_label="Positive/Swabs",
-          color="red", size = 10, fill_alpha = 0.5, line_color = 'red', line_width = 2)
+# p02.circle(x = 'date', y = 'pos_over_swab', source = source_db, legend_label="Positive/Swabs",
+#           color="red", size = 10, fill_alpha = 0.5, line_color = 'red', line_width = 2)
 p02.line(x = 'date', y = 'pos_over_swab', source = source_db, legend_label="Positive/Swabs",
-          color="red", line_color = 'red', line_width = 2)
-p02.circle(x = 'date', y = 'hosp_over_pos', source = source_db, legend_label="Hospit/Positives",
-          color="orange", size = 10, fill_alpha = 0.5, line_color = 'orange', line_width = 2)
+          color="red", line_color = 'red', line_width = 3)
+# p02.circle(x = 'date', y = 'hosp_over_pos', source = source_db, legend_label="Hospit/Positives",
+#           color="orange", size = 10, fill_alpha = 0.5, line_color = 'orange', line_width = 2)
 p02.line(x = 'date', y = 'hosp_over_pos', source = source_db, legend_label="Hospit/Positives",
-          color="orange", line_color = 'orange', line_width = 2)
-p02.circle(x = 'date', y = 'rec_over_cases', source = source_db, legend_label="Recovered/Cases",
-          color="green", size = 10, fill_alpha = 0.5, line_color = 'green', line_width = 2)
+          color="orange", line_color = 'orange', line_width = 3)
+# p02.circle(x = 'date', y = 'rec_over_cases', source = source_db, legend_label="Recovered/Cases",
+#           color="green", size = 10, fill_alpha = 0.5, line_color = 'green', line_width = 2)
 p02.line(x = 'date', y = 'rec_over_cases', source = source_db, legend_label="Recovered/Cases",
-          color="green", line_color = 'green', line_width = 2)
-p02.circle(x = 'date', y = 'ic_over_pos', source = source_db, legend_label="IC/Positives",
-          color="purple", size = 10, fill_alpha = 0.5, line_color = 'purple', line_width = 2)
+          color="green", line_color = 'green', line_width = 3)
+# p02.circle(x = 'date', y = 'ic_over_pos', source = source_db, legend_label="IC/Positives",
+#           color="purple", size = 10, fill_alpha = 0.5, line_color = 'purple', line_width = 2)
 p02.line(x = 'date', y = 'ic_over_pos', source = source_db, legend_label="IC/Positives",
-          color="purple", line_color = 'purple', line_width = 2)
-p02.circle(x = 'date', y = 'dead_over_cases', source = source_db, legend_label="Deaths/Cases",
-          color="black", size = 10, fill_alpha = 0.5, line_color = 'black', line_width = 2)
+          color="purple", line_color = 'purple', line_width = 3)
+#p02.circle(x = 'date', y = 'dead_over_cases', source = source_db, legend_label="Deaths/Cases",
+#          color="black", size = 10, fill_alpha = 0.5, line_color = 'black', line_width = 2)
 p02.line(x = 'date', y = 'dead_over_cases', source = source_db, legend_label="Deaths/Cases",
-          color="black", line_color = 'black', line_width = 2)
+          color="black", line_color = 'black', line_width = 3)
 
 p02.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0.0%")
 p02.legend.label_text_font_size = "9pt"
@@ -783,13 +783,13 @@ p03.legend.click_policy="hide"
 p03.add_tools(bkh_mod.HoverTool(tooltips = reg_tooltips))
 
 p021 = bkh_plt.figure(tools = TOOLS_NEW, #width=500, #height=350,
-                    title="New positives over new swabs",
+                    title="% of new positives over new swabs (% di nuovi infetti su nuovi tamponi)",
                     #x_axis_label='x', #y_axis_label='y',
                     x_axis_type='datetime')
-p021.circle(x = 'date', y = 'pos_over_swab', source = source_db, legend_label="Positive/Swabs",
-          color="red", size = 10, fill_alpha = 0.5, line_color = 'red', line_width = 2)
+#p021.circle(x = 'date', y = 'pos_over_swab', source = source_db, legend_label="Positive/Swabs",
+#          color="red", size = 10, fill_alpha = 0.5, line_color = 'red', line_width = 2)
 p021.line(x = 'date', y = 'pos_over_swab', source = source_db, legend_label="Positive/Swabs",
-          color="red", line_color = 'red', line_width = 2)
+          color="red", line_color = 'red', line_width = 3)
 p021.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0.0%")
 p021.legend.label_text_font_size = "9pt"
 p021.background_fill_color ="gainsboro"
@@ -800,13 +800,13 @@ p021.legend.click_policy="hide"
 p021.add_tools(bkh_mod.HoverTool(tooltips = frac_tooltips))
 
 p022 = bkh_plt.figure(tools = TOOLS_NEW, #width=500, #height=350,
-                    title="Intensive care over positives",
+                    title="% of intensive care patients over positives",
                     #x_axis_label='x', #y_axis_label='y',
                     x_axis_type='datetime')
-p022.circle(x = 'date', y = 'ic_over_pos', source = source_db, legend_label="IC/Positives",
-          color="purple", size = 10, fill_alpha = 0.5, line_color = 'purple', line_width = 2)
+#p022.circle(x = 'date', y = 'ic_over_pos', source = source_db, legend_label="IC/Positives",
+#          color="purple", size = 10, fill_alpha = 0.5, line_color = 'purple', line_width = 2)
 p022.line(x = 'date', y = 'ic_over_pos', source = source_db, legend_label="IC/Positives",
-          color="purple", line_color = 'purple', line_width = 2)
+          color="purple", line_color = 'purple', line_width = 3)
 p022.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0.0%")
 p022.legend.label_text_font_size = "9pt"
 p022.background_fill_color ="gainsboro"
@@ -821,9 +821,9 @@ p011 = bkh_plt.figure(tools = TOOLS_NEW, #width=500, #height=350,
                     #x_axis_label='x', #y_axis_label='y',
                     x_axis_type='datetime', y_axis_type="log")
 p011.line(x = 'date', y = 'n_dead', source = source_db, legend_label="Deaths",
-          color="black", line_color = 'black', alpha = 1, line_width = 2)
-p011.circle(x = 'date', y = 'n_dead', source = source_db, legend_label="Deaths",
-          color="black", size = 10, line_color = 'black', alpha = 0.5, line_width = 2)
+          color="black", line_color = 'black', alpha = 1, line_width = 3)
+#p011.circle(x = 'date', y = 'n_dead', source = source_db, legend_label="Deaths",
+#          color="black", size = 10, line_color = 'black', alpha = 0.5, line_width = 2)
 
 
 p011.background_fill_color ="gainsboro"
@@ -849,28 +849,28 @@ cir = {}; lin = {}
 #          color="blue", size = 10, fill_alpha = 0.5, line_color = 'blue', line_width = 2)
 #lin["Swabs"] = p04.line(x = 'date', y = 'n_swab_diff', source = source_db, legend_label="Swabs",
 #          color="blue", line_color = 'blue', line_width = 2)
-cir["Cases"] = p04.circle(x = 'date', y = 'n_tot_case_diff', source = source_db, legend_label="Cases",
-          color="magenta", size = 10, fill_alpha = 0.5, line_color = 'magenta', line_width = 2)
+# cir["Cases"] = p04.circle(x = 'date', y = 'n_tot_case_diff', source = source_db, legend_label="Cases",
+#           color="magenta", size = 10, fill_alpha = 0.5, line_color = 'magenta', line_width = 2)
 lin["Cases"] = p04.line(x = 'date', y = 'n_tot_case_diff', source = source_db, legend_label="Cases",
           color="magenta", line_color = 'magenta', line_width = 2)
-p04.circle(x = 'date', y = 'n_tot_pos_diff', source = source_db, legend_label="Positives",
-          color="red", size = 10, fill_alpha = 0.5, line_color = 'red', line_width = 2)
+#p04.circle(x = 'date', y = 'n_tot_pos_diff', source = source_db, legend_label="Positives",
+#          color="red", size = 10, fill_alpha = 0.5, line_color = 'red', line_width = 2)
 p04.line(x = 'date', y = 'n_tot_pos_diff', source = source_db, legend_label="Positives",
           color="red", line_color = 'red', line_width = 2)
-cir["Hospitalized"] = p04.circle(x = 'date', y = 'n_tot_hosp_diff', source = source_db, legend_label="Hospitalized",
-          color="orange", size = 10, fill_alpha = 0.5, line_color = 'orange', line_width = 2)
+# cir["Hospitalized"] = p04.circle(x = 'date', y = 'n_tot_hosp_diff', source = source_db, legend_label="Hospitalized",
+#           color="orange", size = 10, fill_alpha = 0.5, line_color = 'orange', line_width = 2)
 lin["Hospitalized"] = p04.line(x = 'date', y = 'n_tot_hosp_diff', source = source_db, legend_label="Hospitalized",
           color="orange", line_color = 'orange', line_width = 2)
-cir["Recovered"] = p04.circle(x = 'date', y = 'n_recovered_diff', source = source_db, legend_label="Recovered",
-          color="green", size = 10, fill_alpha = 0.5, line_color = 'green', line_width = 2)
+# cir["Recovered"] = p04.circle(x = 'date', y = 'n_recovered_diff', source = source_db, legend_label="Recovered",
+#           color="green", size = 10, fill_alpha = 0.5, line_color = 'green', line_width = 2)
 lin["Recovered"] = p04.line(x = 'date', y = 'n_recovered_diff', source = source_db, legend_label="Recovered",
           color="green", line_color = 'green', line_width = 2)
-p04.circle(x = 'date', y = 'n_ic_diff', source = source_db, legend_label="IC",
-          color="purple", size = 10, fill_alpha = 0.5, line_color = 'purple', line_width = 2)
+#p04.circle(x = 'date', y = 'n_ic_diff', source = source_db, legend_label="IC",
+#          color="purple", size = 10, fill_alpha = 0.5, line_color = 'purple', line_width = 2)
 p04.line(x = 'date', y = 'n_ic_diff', source = source_db, legend_label="IC",
           color="purple", line_color = 'purple', line_width = 2)
-p04.circle(x = 'date', y = 'n_dead_diff', source = source_db, legend_label="Deaths",
-          color="black", size = 10, fill_alpha = 0.5, line_color = 'black', line_width = 2)
+#p04.circle(x = 'date', y = 'n_dead_diff', source = source_db, legend_label="Deaths",
+#          color="black", size = 10, fill_alpha = 0.5, line_color = 'black', line_width = 2)
 p04.line(x = 'date', y = 'n_dead_diff', source = source_db, legend_label="Deaths",
           color="black", line_color = 'black', line_width = 2)
 #lin["Swabs"].visible = False
@@ -878,9 +878,9 @@ lin["Cases"].visible = False
 lin["Hospitalized"].visible = False
 lin["Recovered"].visible = False
 #cir["Swabs"].visible = False
-cir["Cases"].visible = False
-cir["Hospitalized"].visible = False
-cir["Recovered"].visible = False
+# cir["Cases"].visible = False
+# cir["Hospitalized"].visible = False
+# cir["Recovered"].visible = False
 
 p04.background_fill_color ="gainsboro"
 p04.sizing_mode = 'scale_width'
@@ -898,41 +898,41 @@ p05 = bkh_plt.figure(tools = TOOLS_NEW, width=500, #height=350,
 cir = {}; lin = {}
 bottom, top = -0.2, 1
 p05.y_range=bkh_mod.Range1d(bottom, top)
-cir["Swabs"] = p05.circle(x = 'date', y = 'n_swab_pct', source = source_db, legend_label="Swabs",
-          color="blue", size = 10, fill_alpha = 0.5, line_color = 'blue', line_width = 2)
+# cir["Swabs"] = p05.circle(x = 'date', y = 'n_swab_pct', source = source_db, legend_label="Swabs",
+#           color="blue", size = 10, fill_alpha = 0.5, line_color = 'blue', line_width = 2)
 lin["Swabs"] = p05.line(x = 'date', y = 'n_swab_pct', source = source_db, legend_label="Swabs",
           color="blue", line_color = 'blue', line_width = 2)
-cir["Cases"] = p05.circle(x = 'date', y = 'n_tot_case_pct', source = source_db, legend_label="Cases",
-          color="magenta", size = 10, fill_alpha = 0.5, line_color = 'magenta', line_width = 2)
+# cir["Cases"] = p05.circle(x = 'date', y = 'n_tot_case_pct', source = source_db, legend_label="Cases",
+#           color="magenta", size = 10, fill_alpha = 0.5, line_color = 'magenta', line_width = 2)
 lin["Cases"] = p05.line(x = 'date', y = 'n_tot_case_pct', source = source_db, legend_label="Cases",
           color="magenta", line_color = 'magenta', line_width = 2)
-p05.circle(x = 'date', y = 'n_tot_pos_pct', source = source_db, legend_label="Positives",
-          color="red", size = 10, fill_alpha = 0.5, line_color = 'red', line_width = 2)
+# p05.circle(x = 'date', y = 'n_tot_pos_pct', source = source_db, legend_label="Positives",
+#           color="red", size = 10, fill_alpha = 0.5, line_color = 'red', line_width = 2)
 p05.line(x = 'date', y = 'n_tot_pos_pct', source = source_db, legend_label="Positives",
           color="red", line_color = 'red', line_width = 2)
-cir["Hospitalized"] = p05.circle(x = 'date', y = 'n_tot_hosp_pct', source = source_db, legend_label="Hospitalized",
-          color="orange", size = 10, fill_alpha = 0.5, line_color = 'orange', line_width = 2)
+# cir["Hospitalized"] = p05.circle(x = 'date', y = 'n_tot_hosp_pct', source = source_db, legend_label="Hospitalized",
+#           color="orange", size = 10, fill_alpha = 0.5, line_color = 'orange', line_width = 2)
 lin["Hospitalized"] = p05.line(x = 'date', y = 'n_tot_hosp_pct', source = source_db, legend_label="Hospitalized",
           color="orange", line_color = 'orange', line_width = 2)
-cir["Recovered"] = p05.circle(x = 'date', y = 'n_recovered_pct', source = source_db, legend_label="Recovered",
-          color="green", size = 10, fill_alpha = 0.5, line_color = 'green', line_width = 2)
+# cir["Recovered"] = p05.circle(x = 'date', y = 'n_recovered_pct', source = source_db, legend_label="Recovered",
+#           color="green", size = 10, fill_alpha = 0.5, line_color = 'green', line_width = 2)
 lin["Recovered"] = p05.line(x = 'date', y = 'n_recovered_pct', source = source_db, legend_label="Recovered",
           color="green", line_color = 'green', line_width = 2)
-p05.circle(x = 'date', y = 'n_ic_pct', source = source_db, legend_label="IC",
-          color="purple", size = 10, fill_alpha = 0.5, line_color = 'purple', line_width = 2)
+# p05.circle(x = 'date', y = 'n_ic_pct', source = source_db, legend_label="IC",
+#           color="purple", size = 10, fill_alpha = 0.5, line_color = 'purple', line_width = 2)
 p05.line(x = 'date', y = 'n_ic_pct', source = source_db, legend_label="IC",
           color="purple", line_color = 'purple', line_width = 2)
-p05.circle(x = 'date', y = 'n_dead_pct', source = source_db, legend_label="Deaths",
-          color="black", size = 10, fill_alpha = 0.5, line_color = 'black', line_width = 2)
+# p05.circle(x = 'date', y = 'n_dead_pct', source = source_db, legend_label="Deaths",
+#           color="black", size = 10, fill_alpha = 0.5, line_color = 'black', line_width = 2)
 lin["Deaths"] = p05.line(x = 'date', y = 'n_dead_pct', source = source_db, legend_label="Deaths",
           color="black", line_color = 'black', line_width = 2)
 lin["Swabs"].visible = False
 lin["Hospitalized"].visible = False
 lin["Recovered"].visible = False
-cir["Swabs"].visible = False
-cir["Hospitalized"].visible = False
-cir["Recovered"].visible = False
-cir["Cases"].visible = False
+# cir["Swabs"].visible = False
+# cir["Hospitalized"].visible = False
+# cir["Recovered"].visible = False
+# cir["Cases"].visible = False
 lin["Cases"].visible = False
 
 p05.background_fill_color ="gainsboro"
@@ -969,34 +969,34 @@ p07 = bkh_plt.figure(tools = TOOLS_NEW, width=500, #height=350,
                     #x_axis_label='x', #y_axis_label='y',
                     x_axis_type='datetime', y_axis_type = "log"
                     )
-p07.circle(x = 'date', y = 'n_swab', source = source_db_reg_puglia, legend_label="Swabs",
-          color="blue", size = 10, fill_alpha = 0.5, line_color = 'blue', line_width = 2)
+# p07.circle(x = 'date', y = 'n_swab', source = source_db_reg_puglia, legend_label="Swabs",
+#           color="blue", size = 10, fill_alpha = 0.5, line_color = 'blue', line_width = 2)
 p07.line(x = 'date', y = 'n_swab', source = source_db_reg_puglia, legend_label="Swabs",
-           color="blue", line_color = 'blue', alpha = 1, line_width = 2)
-p07.circle(x = 'date', y = 'n_tot_case', source = source_db_reg_puglia, legend_label="Cases",
-          color="magenta", size = 10, line_color = 'magenta', fill_alpha = 0.5, line_width = 2)
+           color="blue", line_color = 'blue', alpha = 1, line_width = 3)
+# p07.circle(x = 'date', y = 'n_tot_case', source = source_db_reg_puglia, legend_label="Cases",
+#           color="magenta", size = 10, line_color = 'magenta', fill_alpha = 0.5, line_width = 2)
 p07.line(x = 'date', y = 'n_tot_case', source = source_db_reg_puglia, legend_label="Cases",
-          color="magenta", line_color = 'magenta', alpha = 1, line_width = 2)
-p07.circle(x = 'date', y = 'n_tot_pos', source = source_db_reg_puglia, legend_label="Positives",
-          color="red", size = 10, line_color = 'red', fill_alpha = 0.5, line_width = 2)
+          color="magenta", line_color = 'magenta', alpha = 1, line_width = 3)
+# p07.circle(x = 'date', y = 'n_tot_pos', source = source_db_reg_puglia, legend_label="Positives",
+#           color="red", size = 10, line_color = 'red', fill_alpha = 0.5, line_width = 2)
 p07.line(x = 'date', y = 'n_tot_pos', source = source_db_reg_puglia, legend_label="Positives",
-          color="red", line_color = 'red', alpha = 1, line_width = 2)
-p07.circle(x = 'date', y = 'n_tot_hosp', source = source_db_reg_puglia, legend_label="Hospitalized",
-          color="orange", size = 10, line_color = 'orange', fill_alpha = 0.5, line_width = 2)
+          color="red", line_color = 'red', alpha = 1, line_width = 3)
+# p07.circle(x = 'date', y = 'n_tot_hosp', source = source_db_reg_puglia, legend_label="Hospitalized",
+#           color="orange", size = 10, line_color = 'orange', fill_alpha = 0.5, line_width = 2)
 p07.line(x = 'date', y = 'n_tot_hosp', source = source_db_reg_puglia, legend_label="Hospitalized",
-          color="orange", line_color = 'orange', alpha = 1, line_width = 2)
-p07.circle(x = 'date', y = 'n_recovered', source = source_db_reg_puglia, legend_label="Recovered",
-          color="green", size = 10, line_color = 'green', fill_alpha = 0.5, line_width = 2)
+          color="orange", line_color = 'orange', alpha = 1, line_width = 3)
+# p07.circle(x = 'date', y = 'n_recovered', source = source_db_reg_puglia, legend_label="Recovered",
+#           color="green", size = 10, line_color = 'green', fill_alpha = 0.5, line_width = 2)
 p07.line(x = 'date', y = 'n_recovered', source = source_db_reg_puglia, legend_label="Recovered",
-          color="green", line_color = 'green', alpha = 1, line_width = 2)
+          color="green", line_color = 'green', alpha = 1, line_width = 3)
 #p07.circle(x = 'date', y = 'n_ic', source = source_db_reg_puglia, legend_label="IC",
 #          color="purple", size = 10, line_color = 'purple', fill_alpha = 0.5, line_width = 2)
 #p07.line(x = 'date', y = 'n_ic', source = source_db_reg_puglia, legend_label="IC",
 #          color="purple", line_color = 'purple', alpha = 1, line_width = 2)
-p07.circle(x = 'date', y = 'n_dead', source = source_db_reg_puglia, legend_label="Deaths",
-          color="black", size = 10, line_color = 'black', fill_alpha = 0.5, line_width = 2)
+# p07.circle(x = 'date', y = 'n_dead', source = source_db_reg_puglia, legend_label="Deaths",
+#           color="black", size = 10, line_color = 'black', fill_alpha = 0.5, line_width = 2)
 p07.line(x = 'date', y = 'n_dead', source = source_db_reg_puglia, legend_label="Deaths",
-          color="black", line_color = 'black', alpha = 1, line_width = 2)
+          color="black", line_color = 'black', alpha = 1, line_width = 3)
 
 
 p07.background_fill_color ="gainsboro"
@@ -1018,30 +1018,30 @@ p08 = bkh_plt.figure(tools = TOOLS_NEW, width=500, #height=350,
 #           color="blue", size = 10, fill_alpha = 0.5, line_color = 'blue', line_width = 2)
 # p08.line(x = 'date', y = 'n_swab_diff', source = source_db_reg_puglia, legend_label="Swabs",
 #           color="blue", line_color = 'blue', line_width = 2)
-p08.circle(x = 'date', y = 'n_tot_case_diff', source = source_db_reg_puglia, legend_label="Cases",
-          color="magenta", size = 10, fill_alpha = 0.5, line_color = 'magenta', line_width = 2)
+# p08.circle(x = 'date', y = 'n_tot_case_diff', source = source_db_reg_puglia, legend_label="Cases",
+#           color="magenta", size = 10, fill_alpha = 0.5, line_color = 'magenta', line_width = 2)
 p08.line(x = 'date', y = 'n_tot_case_diff', source = source_db_reg_puglia, legend_label="Cases",
-          color="magenta", line_color = 'magenta', line_width = 2)
-p08.circle(x = 'date', y = 'n_tot_pos_diff', source = source_db_reg_puglia, legend_label="Positives",
-          color="red", size = 10, fill_alpha = 0.5, line_color = 'red', line_width = 2)
+          color="magenta", line_color = 'magenta', line_width = 3)
+# p08.circle(x = 'date', y = 'n_tot_pos_diff', source = source_db_reg_puglia, legend_label="Positives",
+#           color="red", size = 10, fill_alpha = 0.5, line_color = 'red', line_width = 2)
 p08.line(x = 'date', y = 'n_tot_pos_diff', source = source_db_reg_puglia, legend_label="Positives",
-          color="red", line_color = 'red', line_width = 2)
-p08.circle(x = 'date', y = 'n_tot_hosp_diff', source = source_db_reg_puglia, legend_label="Hospitalized",
-          color="orange", size = 10, fill_alpha = 0.5, line_color = 'orange', line_width = 2)
+          color="red", line_color = 'red', line_width = 3)
+# p08.circle(x = 'date', y = 'n_tot_hosp_diff', source = source_db_reg_puglia, legend_label="Hospitalized",
+#           color="orange", size = 10, fill_alpha = 0.5, line_color = 'orange', line_width = 2)
 p08.line(x = 'date', y = 'n_tot_hosp_diff', source = source_db_reg_puglia, legend_label="Hospitalized",
-          color="orange", line_color = 'orange', line_width = 2)
-p08.circle(x = 'date', y = 'n_recovered_diff', source = source_db_reg_puglia, legend_label="Recovered",
-          color="green", size = 10, fill_alpha = 0.5, line_color = 'green', line_width = 2)
+          color="orange", line_color = 'orange', line_width = 3)
+# p08.circle(x = 'date', y = 'n_recovered_diff', source = source_db_reg_puglia, legend_label="Recovered",
+#           color="green", size = 10, fill_alpha = 0.5, line_color = 'green', line_width = 2)
 p08.line(x = 'date', y = 'n_recovered_diff', source = source_db_reg_puglia, legend_label="Recovered",
-          color="green", line_color = 'green', line_width = 2)
-p08.circle(x = 'date', y = 'n_ic_diff', source = source_db_reg_puglia, legend_label="IC",
-          color="purple", size = 10, fill_alpha = 0.5, line_color = 'purple', line_width = 2)
+          color="green", line_color = 'green', line_width = 3)
+# p08.circle(x = 'date', y = 'n_ic_diff', source = source_db_reg_puglia, legend_label="IC",
+#           color="purple", size = 10, fill_alpha = 0.5, line_color = 'purple', line_width = 2)
 p08.line(x = 'date', y = 'n_ic_diff', source = source_db_reg_puglia, legend_label="IC",
-          color="purple", line_color = 'purple', line_width = 2)
-p08.circle(x = 'date', y = 'n_dead_diff', source = source_db_reg_puglia, legend_label="Deaths",
-          color="black", size = 10, fill_alpha = 0.5, line_color = 'black', line_width = 2)
+          color="purple", line_color = 'purple', line_width = 3)
+# p08.circle(x = 'date', y = 'n_dead_diff', source = source_db_reg_puglia, legend_label="Deaths",
+#           color="black", size = 10, fill_alpha = 0.5, line_color = 'black', line_width = 2)
 p08.line(x = 'date', y = 'n_dead_diff', source = source_db_reg_puglia, legend_label="Deaths",
-          color="black", line_color = 'black', line_width = 2)
+          color="black", line_color = 'black', line_width = 3)
 p08.background_fill_color ="gainsboro"
 p08.sizing_mode = 'scale_width'
 p08.legend.location = "top_left"
@@ -1055,26 +1055,26 @@ p09 = bkh_plt.figure(tools = TOOLS_NEW, width=500, #height=350,
                     title="Trend of proportions for Apulia Region",
                     #x_axis_label='x', #y_axis_label='y',
                     x_axis_type='datetime')
-p09.circle(x = 'date', y = 'pos_over_swab', source = source_db_reg_puglia, legend_label="Positive/Swabs",
-          color="red", size = 10, fill_alpha = 0.5, line_color = 'red', line_width = 2)
+# p09.circle(x = 'date', y = 'pos_over_swab', source = source_db_reg_puglia, legend_label="Positive/Swabs",
+#           color="red", size = 10, fill_alpha = 0.5, line_color = 'red', line_width = 2)
 p09.line(x = 'date', y = 'pos_over_swab', source = source_db_reg_puglia, legend_label="Positive/Swabs",
-          color="red", line_color = 'red', line_width = 2)
-p09.circle(x = 'date', y = 'hosp_over_pos', source = source_db_reg_puglia, legend_label="Hospit/Positives",
-          color="orange", size = 10, fill_alpha = 0.5, line_color = 'orange', line_width = 2)
+          color="red", line_color = 'red', line_width = 3)
+# p09.circle(x = 'date', y = 'hosp_over_pos', source = source_db_reg_puglia, legend_label="Hospit/Positives",
+#           color="orange", size = 10, fill_alpha = 0.5, line_color = 'orange', line_width = 2)
 p09.line(x = 'date', y = 'hosp_over_pos', source = source_db_reg_puglia, legend_label="Hospit/Positives",
-          color="orange", line_color = 'orange', line_width = 2)
-p09.circle(x = 'date', y = 'rec_over_cases', source = source_db_reg_puglia, legend_label="Recovered/Cases",
-          color="green", size = 10, fill_alpha = 0.5, line_color = 'green', line_width = 2)
+          color="orange", line_color = 'orange', line_width = 3)
+# p09.circle(x = 'date', y = 'rec_over_cases', source = source_db_reg_puglia, legend_label="Recovered/Cases",
+#           color="green", size = 10, fill_alpha = 0.5, line_color = 'green', line_width = 2)
 p09.line(x = 'date', y = 'rec_over_cases', source = source_db_reg_puglia, legend_label="Recovered/Cases",
-          color="green", line_color = 'green', line_width = 2)
-p09.circle(x = 'date', y = 'ic_over_pos', source = source_db_reg_puglia, legend_label="IC/Positives",
-          color="purple", size = 10, fill_alpha = 0.5, line_color = 'purple', line_width = 2)
+          color="green", line_color = 'green', line_width = 3)
+# p09.circle(x = 'date', y = 'ic_over_pos', source = source_db_reg_puglia, legend_label="IC/Positives",
+#           color="purple", size = 10, fill_alpha = 0.5, line_color = 'purple', line_width = 2)
 p09.line(x = 'date', y = 'ic_over_pos', source = source_db_reg_puglia, legend_label="IC/Positives",
-          color="purple", line_color = 'purple', line_width = 2)
-p09.circle(x = 'date', y = 'dead_over_cases', source = source_db_reg_puglia, legend_label="Deaths/Cases",
-          color="black", size = 10, fill_alpha = 0.5, line_color = 'black', line_width = 2)
+          color="purple", line_color = 'purple', line_width = 3)
+# p09.circle(x = 'date', y = 'dead_over_cases', source = source_db_reg_puglia, legend_label="Deaths/Cases",
+#           color="black", size = 10, fill_alpha = 0.5, line_color = 'black', line_width = 2)
 p09.line(x = 'date', y = 'dead_over_cases', source = source_db_reg_puglia, legend_label="Deaths/Cases",
-          color="black", line_color = 'black', line_width = 2)
+          color="black", line_color = 'black', line_width = 3)
 
 p09.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0.0%")
 p09.legend.label_text_font_size = "8pt"
@@ -1113,29 +1113,29 @@ p11 = bkh_plt.figure(tools = TOOLS_NEW, width=500, #height = 650,
                     #x_axis_label='x', #y_axis_label='y',
                     x_axis_type='datetime', y_axis_type = "log")
 p11.line(x = 'date', y = 'n_tot_case', source = source_db_prov_bari, legend_label="Bari",
-          color="blue", line_color = 'blue', line_width = 2)
-p11.circle(x = 'date', y = 'n_tot_case', source = source_db_prov_bari, legend_label="Bari",
-          color="blue", size = 10, fill_alpha = 0.5, line_color = 'blue', line_width = 2)
+          color="blue", line_color = 'blue', line_width = 3)
+# p11.circle(x = 'date', y = 'n_tot_case', source = source_db_prov_bari, legend_label="Bari",
+#           color="blue", size = 10, fill_alpha = 0.5, line_color = 'blue', line_width = 2)
 p11.line(x = 'date', y = 'n_tot_case', source = source_db_prov_bat, legend_label="B-A-T",
-          color="red", line_color = 'red', line_width = 2)
-p11.circle(x = 'date', y = 'n_tot_case', source = source_db_prov_bat, legend_label="B-A-T",
-          color="red", size = 10, fill_alpha = 0.5, line_color = 'red', line_width = 2)
+          color="red", line_color = 'red', line_width = 3)
+# p11.circle(x = 'date', y = 'n_tot_case', source = source_db_prov_bat, legend_label="B-A-T",
+#           color="red", size = 10, fill_alpha = 0.5, line_color = 'red', line_width = 2)
 p11.line(x = 'date', y = 'n_tot_case', source = source_db_prov_brindisi, legend_label="Brindisi",
-          color="green", line_color = 'green', line_width = 2)
-p11.circle(x = 'date', y = 'n_tot_case', source = source_db_prov_brindisi, legend_label="Brindisi",
-          color="green", size = 10, fill_alpha = 0.5, line_color = 'green', line_width = 2)
+          color="green", line_color = 'green', line_width = 3)
+# p11.circle(x = 'date', y = 'n_tot_case', source = source_db_prov_brindisi, legend_label="Brindisi",
+#           color="green", size = 10, fill_alpha = 0.5, line_color = 'green', line_width = 2)
 p11.line(x = 'date', y = 'n_tot_case', source = source_db_prov_foggia, legend_label="Foggia",
-          color="magenta", line_color = 'magenta', line_width = 2)
-p11.circle(x = 'date', y = 'n_tot_case', source = source_db_prov_foggia, legend_label="Foggia",
-          color="magenta", size = 10, fill_alpha = 0.5, line_color = 'magenta', line_width = 2)
+          color="magenta", line_color = 'magenta', line_width = 3)
+# p11.circle(x = 'date', y = 'n_tot_case', source = source_db_prov_foggia, legend_label="Foggia",
+#           color="magenta", size = 10, fill_alpha = 0.5, line_color = 'magenta', line_width = 2)
 p11.line(x = 'date', y = 'n_tot_case', source = source_db_prov_lecce, legend_label="Lecce",
-          color="orange", line_color = 'orange', line_width = 2)
-p11.circle(x = 'date', y = 'n_tot_case', source = source_db_prov_lecce, legend_label="Lecce",
-          color="orange", size = 10, fill_alpha = 0.5, line_color = 'orange', line_width = 2)
+          color="orange", line_color = 'orange', line_width = 3)
+# p11.circle(x = 'date', y = 'n_tot_case', source = source_db_prov_lecce, legend_label="Lecce",
+#           color="orange", size = 10, fill_alpha = 0.5, line_color = 'orange', line_width = 2)
 p11.line(x = 'date', y = 'n_tot_case', source = source_db_prov_taranto, legend_label="Taranto",
-          color="purple", line_color = 'purple', line_width = 2)
-p11.circle(x = 'date', y = 'n_tot_case', source = source_db_prov_taranto, legend_label="Taranto",
-          color="purple", size = 10, fill_alpha = 0.5, line_color = 'purple', line_width = 2)
+          color="purple", line_color = 'purple', line_width = 3)
+# p11.circle(x = 'date', y = 'n_tot_case', source = source_db_prov_taranto, legend_label="Taranto",
+#           color="purple", size = 10, fill_alpha = 0.5, line_color = 'purple', line_width = 2)
 
 
 p11.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0,000")
@@ -1153,29 +1153,29 @@ p12 = bkh_plt.figure(tools = TOOLS_NEW, width=500, #height = 650,
                     x_axis_type='datetime', #y_axis_type = "log"
                     )
 p12.line(x = 'date', y = 'n_tot_case_unit', source = source_db_prov_bari, legend_label="Bari",
-          color="blue", line_color = 'blue', line_width = 2)
-p12.circle(x = 'date', y = 'n_tot_case_unit', source = source_db_prov_bari, legend_label="Bari",
-          color="blue", size = 10, fill_alpha = 0.5, line_color = 'blue', line_width = 2)
+          color="blue", line_color = 'blue', line_width = 3)
+# p12.circle(x = 'date', y = 'n_tot_case_unit', source = source_db_prov_bari, legend_label="Bari",
+#           color="blue", size = 10, fill_alpha = 0.5, line_color = 'blue', line_width = 2)
 p12.line(x = 'date', y = 'n_tot_case_unit', source = source_db_prov_bat, legend_label="B-A-T",
-          color="red", line_color = 'red', line_width = 2)
-p12.circle(x = 'date', y = 'n_tot_case_unit', source = source_db_prov_bat, legend_label="B-A-T",
-          color="red", size = 10, fill_alpha = 0.5, line_color = 'red', line_width = 2)
+          color="red", line_color = 'red', line_width = 3)
+# p12.circle(x = 'date', y = 'n_tot_case_unit', source = source_db_prov_bat, legend_label="B-A-T",
+#           color="red", size = 10, fill_alpha = 0.5, line_color = 'red', line_width = 2)
 p12.line(x = 'date', y = 'n_tot_case_unit', source = source_db_prov_brindisi, legend_label="Brindisi",
-          color="green", line_color = 'green', line_width = 2)
-p12.circle(x = 'date', y = 'n_tot_case_unit', source = source_db_prov_brindisi, legend_label="Brindisi",
-          color="green", size = 10, fill_alpha = 0.5, line_color = 'green', line_width = 2)
+          color="green", line_color = 'green', line_width = 3)
+# p12.circle(x = 'date', y = 'n_tot_case_unit', source = source_db_prov_brindisi, legend_label="Brindisi",
+#           color="green", size = 10, fill_alpha = 0.5, line_color = 'green', line_width = 2)
 p12.line(x = 'date', y = 'n_tot_case_unit', source = source_db_prov_foggia, legend_label="Foggia",
-          color="magenta", line_color = 'magenta', line_width = 2)
-p12.circle(x = 'date', y = 'n_tot_case_unit', source = source_db_prov_foggia, legend_label="Foggia",
-          color="magenta", size = 10, fill_alpha = 0.5, line_color = 'magenta', line_width = 2)
+          color="magenta", line_color = 'magenta', line_width = 3)
+# p12.circle(x = 'date', y = 'n_tot_case_unit', source = source_db_prov_foggia, legend_label="Foggia",
+#           color="magenta", size = 10, fill_alpha = 0.5, line_color = 'magenta', line_width = 2)
 p12.line(x = 'date', y = 'n_tot_case_unit', source = source_db_prov_lecce, legend_label="Lecce",
-          color="orange", line_color = 'orange', line_width = 2)
-p12.circle(x = 'date', y = 'n_tot_case_unit', source = source_db_prov_lecce, legend_label="Lecce",
-          color="orange", size = 10, fill_alpha = 0.5, line_color = 'orange', line_width = 2)
+          color="orange", line_color = 'orange', line_width = 3)
+# p12.circle(x = 'date', y = 'n_tot_case_unit', source = source_db_prov_lecce, legend_label="Lecce",
+#           color="orange", size = 10, fill_alpha = 0.5, line_color = 'orange', line_width = 2)
 p12.line(x = 'date', y = 'n_tot_case_unit', source = source_db_prov_taranto, legend_label="Taranto",
-          color="purple", line_color = 'purple', line_width = 2)
-p12.circle(x = 'date', y = 'n_tot_case_unit', source = source_db_prov_taranto, legend_label="Taranto",
-          color="purple", size = 10, fill_alpha = 0.5, line_color = 'purple', line_width = 2)
+          color="purple", line_color = 'purple', line_width = 3)
+# p12.circle(x = 'date', y = 'n_tot_case_unit', source = source_db_prov_taranto, legend_label="Taranto",
+#           color="purple", size = 10, fill_alpha = 0.5, line_color = 'purple', line_width = 2)
 
 
 p12.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0.00%")
@@ -1260,9 +1260,9 @@ cmap = bkh_pal.Spectral[N_MAIN_COUNTRY]
 k = 0
 for country in source_db_world_conf_ts.data.keys():
     if (country !='index')&(country !='Date')&(country !='date_string'):
-        lx = p15.line(x = 'Date', y = country, source = source_db_world_conf_ts, color = cmap[k], legend_label=country, line_width = 2)
-        p15.circle(x = 'Date', y = country, source = source_db_world_conf_ts, legend_label= country,
-          color=cmap[k], size = 8, line_color = cmap[k], alpha = 0.75, line_width = 2)
+        lx = p15.line(x = 'Date', y = country, source = source_db_world_conf_ts, color = cmap[k], legend_label=country, line_width = 3)
+        # p15.circle(x = 'Date', y = country, source = source_db_world_conf_ts, legend_label= country,
+        #   color=cmap[k], size = 8, line_color = cmap[k], alpha = 0.75, line_width = 2)
         #p15.add_tools(bkh_mod.HoverTool(tooltips="This is %s %s" % (country, 'y'), renderers=[lx]))
         p15.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("Country", country), ("Confirmed", "$y{0,000f}")], renderers=[lx]))
         #p15.add_tools(bkh_mod.HoverTool(tooltips = world_ts_tooltips))
@@ -1286,9 +1286,9 @@ cmap = bkh_pal.Spectral[N_MAIN_COUNTRY]
 k = 0
 for country in source_db_world_death_ts.data.keys():
     if (country !='index')&(country !='Date')&(country !='date_string'):
-        p15b.line(x = 'Date', y = country, source = source_db_world_death_ts, color = cmap[k], legend_label=country, line_width = 2)
-        lxb = p15b.circle(x = 'Date', y = country, source = source_db_world_death_ts, legend_label= country,
-          color=cmap[k], size = 8, line_color = cmap[k], alpha = 0.75, line_width = 2)
+        lxb = p15b.line(x = 'Date', y = country, source = source_db_world_death_ts, color = cmap[k], legend_label=country, line_width = 3)
+        # p15b.circle(x = 'Date', y = country, source = source_db_world_death_ts, legend_label= country,
+        #   color=cmap[k], size = 8, line_color = cmap[k], alpha = 0.75, line_width = 2)
         #p15.add_tools(bkh_mod.HoverTool(tooltips="This is %s %s" % (country, 'y'), renderers=[lx]))
         p15b.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("Country", country), ("Deaths", "$y{0,000f}")], renderers=[lxb]))
         #p15.add_tools(bkh_mod.HoverTool(tooltips = world_ts_tooltips))
@@ -1398,7 +1398,7 @@ cmap = bkh_pal.inferno(len(si_scenario_columns))
 k = 0
 for i in range(0,len(si_scenario_columns), 5):
     lsi2 = p18b.line(x = 'Date', y = str(si_scenario_columns[i]), source = source_si_diff, color = cmap[i], legend_label=str(si_scenario_columns[i]), 
-                    line_width = 2, alpha = 0.5)
+                    line_width = 2, alpha = 1)
     p18b.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("Start forecast date", str(si_scenario_columns[i])), ("Infected", "$y{0,000f}")], renderers=[lsi2]))
     #k = k + 1
 #lsi2c = p18b.cross(x = 'Date', y = str(SCENARIO_RANGE[-1]), source = source_si, color = 'gray', 
@@ -1408,8 +1408,10 @@ p18b.add_tools(bkh_mod.HoverTool( tooltips=[("Date", "@date_string"),  ("Start f
 lsi18b = Band(base='Date', lower='min', upper='max', source=source_si_diff, level='underlay',
             fill_alpha=0.2, fill_color='orange')
 p18b.add_layout(lsi18b)
-lsi2b = p18b.circle(x = 'date', y = "n_new_pos", source = source_db, legend_label= "observed",
-           color="red", size = 8, line_color = "red", alpha = 0.5, line_width = 2)
+# lsi2b = p18b.circle(x = 'date', y = "n_new_pos", source = source_db, legend_label= "observed",
+#            color="red", size = 8, line_color = "red", alpha = 0.5, line_width = 2)
+lsi2b = p18b.line(x = 'date', y = "n_new_pos", source = source_db, legend_label= "observed",
+           color="red", line_color = "red", alpha = 1, line_width = 3)
 p18b.add_tools(bkh_mod.HoverTool(tooltips = diff_tooltips, renderers=[lsi2b]))
 
 p18b.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0,000")
