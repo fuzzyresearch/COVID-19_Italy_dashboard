@@ -199,11 +199,11 @@ X_national_3 = pd.merge(X_national_2, X_national_pct, how = 'left', on = 'date_s
 X_national_4 = pd.merge(X_national_3, X_national_diff, how = 'left', on = 'date_string')
 #%%
 X_regional_last = X_regional.loc[X_regional.date == end,:].reset_index(drop = True)
-X_regional_last["n_tot_pos_map"] = (X_regional_last["n_tot_pos"])**0.45
-X_regional_last["n_tot_case_map"] = (X_regional_last["n_tot_case"])**0.45
-X_regional_last["n_tot_rec_map"] = (X_regional_last["n_recovered"])**0.45
-X_regional_last["n_ic_map"] = (X_regional_last["n_ic"])**0.45
-X_regional_last["n_dead_map"] = (X_regional_last["n_dead"])**0.45
+X_regional_last["n_tot_pos_map"] = (X_regional_last["n_tot_pos"])**0.35
+X_regional_last["n_tot_case_map"] = (X_regional_last["n_tot_case"])**0.35
+X_regional_last["n_tot_rec_map"] = (X_regional_last["n_recovered"])**0.35
+X_regional_last["n_ic_map"] = (X_regional_last["n_ic"])**0.35
+X_regional_last["n_dead_map"] = (X_regional_last["n_dead"])**0.35
 X_regional_info = X_regional_last.drop(columns = col_national_num)
 X_regional_before_last = X_regional.loc[X_regional.date == end-datetime.timedelta(days = 1),:].reset_index(drop = True)
 X_regional_var = X_regional_last[col_national_num]-X_regional_before_last[col_national_num]
@@ -448,7 +448,7 @@ SCENARIO_RANGE = np.array(range(len(yori)-10,len(yori)))
 
 ##############################################################################
 
-TIME_WINDOW_SIR = 200    
+TIME_WINDOW_SIR = 400    
 
 Iobs = X_national.loc[:, "n_tot_pos"]
 Robs = X_national.loc[:, "n_recovered"] + X_national.loc[:, "n_dead"]
@@ -683,7 +683,7 @@ LegMeaning.sizing_mode = 'scale_width'
     
     
 
-p01 = bkh_plt.figure(tools = TOOLS_NEW, width=500, #height=350,
+p01 = bkh_plt.figure(tools = TOOLS_NEW, #width=500, #height=350,
                     title="Trend of cumulative values for Italy",
                     #x_axis_label='x', #y_axis_label='y',
                     x_axis_type='datetime', y_axis_type="log")
@@ -719,7 +719,7 @@ p01.circle(x = 'date', y = 'n_dead', source = source_db, legend_label="Deaths",
 
 p01.background_fill_color ="gainsboro"
 p01.legend.label_text_font_size = "9pt"
-p01.sizing_mode = 'scale_width'
+p01.sizing_mode = 'stretch_height'
 p01.legend.location = "top_left"
 p01.legend.background_fill_alpha = 0.0
 p01.legend.click_policy="hide"
@@ -727,7 +727,7 @@ p01.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0,000")
 p01.add_tools(bkh_mod.HoverTool(tooltips = abs_tooltips))
 
 
-p02 = bkh_plt.figure(tools = TOOLS_NEW, width=500, #height=350,
+p02 = bkh_plt.figure(tools = TOOLS_NEW, #width=500, #height=350,
                     title="Trend of proportions for Italy",
                     #x_axis_label='x', #y_axis_label='y',
                     x_axis_type='datetime')
@@ -755,17 +755,18 @@ p02.line(x = 'date', y = 'dead_over_cases', source = source_db, legend_label="De
 p02.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0.0%")
 p02.legend.label_text_font_size = "9pt"
 p02.background_fill_color ="gainsboro"
-p02.sizing_mode = 'scale_width'
+p02.sizing_mode = 'stretch_height'
 p02.legend.location = "top_left"
 p02.legend.background_fill_alpha = 0.0
 p02.legend.click_policy="hide"
 p02.add_tools(bkh_mod.HoverTool(tooltips = frac_tooltips))
 
 tile_provider = get_provider(Vendors.CARTODBPOSITRON)
-p03 = bkh_plt.figure(x_range=(+600000, 2200000), y_range=(+4900000, 5500000),
+p03 = bkh_plt.figure(x_range=(+500000, 2500000), y_range=(+4500000, 5800000),
                                         title="Spread Map for Italy",
            x_axis_type="mercator", y_axis_type="mercator",  
-                    width=500)
+                    #width=500
+           )
 p03.add_tile(tile_provider)
 p03.circle(x='utm_coord_x', y='utm_coord_y', size="n_tot_case_map", color = 'magenta', fill_color="magenta", fill_alpha=0.1, source = source_db_reg, legend_label="Cases")
 p03.circle(x='utm_coord_x', y='utm_coord_y', size="n_tot_pos_map", color = 'red', fill_color="red", fill_alpha=0.1, source = source_db_reg, legend_label="Positives")
@@ -774,12 +775,66 @@ p03.circle(x='utm_coord_x', y='utm_coord_y', size="n_tot_rec_map", color = 'gree
 p03.circle(x='utm_coord_x', y='utm_coord_y', size="n_dead_map", color = 'black', fill_color="black", fill_alpha=0.1, source = source_db_reg, legend_label="Deaths")
 glyph = bkh_mod.Text(x='utm_coord_x', y='utm_coord_y', text="name_reg", angle=0.0, text_color="black", text_font_size = "8pt")
 p03.add_glyph(source_db_reg, glyph)
-p03.sizing_mode = 'scale_width'
+p03.sizing_mode = 'stretch_height'
 p03.legend.label_text_font_size = "9pt"
 p03.legend.location = "top_right"
 p03.legend.background_fill_alpha = 0.0
 p03.legend.click_policy="hide"
 p03.add_tools(bkh_mod.HoverTool(tooltips = reg_tooltips))
+
+p021 = bkh_plt.figure(tools = TOOLS_NEW, #width=500, #height=350,
+                    title="New positives over new swabs",
+                    #x_axis_label='x', #y_axis_label='y',
+                    x_axis_type='datetime')
+p021.circle(x = 'date', y = 'pos_over_swab', source = source_db, legend_label="Positive/Swabs",
+          color="red", size = 10, fill_alpha = 0.5, line_color = 'red', line_width = 2)
+p021.line(x = 'date', y = 'pos_over_swab', source = source_db, legend_label="Positive/Swabs",
+          color="red", line_color = 'red', line_width = 2)
+p021.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0.0%")
+p021.legend.label_text_font_size = "9pt"
+p021.background_fill_color ="gainsboro"
+p021.sizing_mode = 'stretch_height'
+p021.legend.location = "top_left"
+p021.legend.background_fill_alpha = 0.0
+p021.legend.click_policy="hide"
+p021.add_tools(bkh_mod.HoverTool(tooltips = frac_tooltips))
+
+p022 = bkh_plt.figure(tools = TOOLS_NEW, #width=500, #height=350,
+                    title="Intensive care over positives",
+                    #x_axis_label='x', #y_axis_label='y',
+                    x_axis_type='datetime')
+p022.circle(x = 'date', y = 'ic_over_pos', source = source_db, legend_label="IC/Positives",
+          color="purple", size = 10, fill_alpha = 0.5, line_color = 'purple', line_width = 2)
+p022.line(x = 'date', y = 'ic_over_pos', source = source_db, legend_label="IC/Positives",
+          color="purple", line_color = 'purple', line_width = 2)
+p022.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0.0%")
+p022.legend.label_text_font_size = "9pt"
+p022.background_fill_color ="gainsboro"
+p022.sizing_mode = 'stretch_height'
+p022.legend.location = "top_left"
+p022.legend.background_fill_alpha = 0.0
+p022.legend.click_policy="hide"
+p022.add_tools(bkh_mod.HoverTool(tooltips = frac_tooltips))
+
+p011 = bkh_plt.figure(tools = TOOLS_NEW, #width=500, #height=350,
+                    title="Trend of cumulative values for Italy",
+                    #x_axis_label='x', #y_axis_label='y',
+                    x_axis_type='datetime', y_axis_type="log")
+p011.line(x = 'date', y = 'n_dead', source = source_db, legend_label="Deaths",
+          color="black", line_color = 'black', alpha = 1, line_width = 2)
+p011.circle(x = 'date', y = 'n_dead', source = source_db, legend_label="Deaths",
+          color="black", size = 10, line_color = 'black', alpha = 0.5, line_width = 2)
+
+
+p011.background_fill_color ="gainsboro"
+p011.legend.label_text_font_size = "9pt"
+p011.sizing_mode = 'stretch_height'
+p011.legend.location = "top_left"
+p011.legend.background_fill_alpha = 0.0
+p011.legend.click_policy="hide"
+p011.yaxis[0].formatter = bkh_mod.NumeralTickFormatter(format="0,000")
+p011.add_tools(bkh_mod.HoverTool(tooltips = abs_tooltips))
+
 
 ##############################################################################
 
@@ -912,7 +967,8 @@ p06.add_tools(bkh_mod.HoverTool(tooltips = reg_var_tooltips))
 p07 = bkh_plt.figure(tools = TOOLS_NEW, width=500, #height=350,
                     title="Trend of cumulative values for Apulia Region",
                     #x_axis_label='x', #y_axis_label='y',
-                    x_axis_type='datetime', y_axis_type = "log")
+                    x_axis_type='datetime', y_axis_type = "log"
+                    )
 p07.circle(x = 'date', y = 'n_swab', source = source_db_reg_puglia, legend_label="Swabs",
           color="blue", size = 10, fill_alpha = 0.5, line_color = 'blue', line_width = 2)
 p07.line(x = 'date', y = 'n_swab', source = source_db_reg_puglia, legend_label="Swabs",
@@ -933,10 +989,10 @@ p07.circle(x = 'date', y = 'n_recovered', source = source_db_reg_puglia, legend_
           color="green", size = 10, line_color = 'green', fill_alpha = 0.5, line_width = 2)
 p07.line(x = 'date', y = 'n_recovered', source = source_db_reg_puglia, legend_label="Recovered",
           color="green", line_color = 'green', alpha = 1, line_width = 2)
-p07.circle(x = 'date', y = 'n_ic', source = source_db_reg_puglia, legend_label="IC",
-          color="purple", size = 10, line_color = 'purple', fill_alpha = 0.5, line_width = 2)
-p07.line(x = 'date', y = 'n_ic', source = source_db_reg_puglia, legend_label="IC",
-          color="purple", line_color = 'purple', alpha = 1, line_width = 2)
+#p07.circle(x = 'date', y = 'n_ic', source = source_db_reg_puglia, legend_label="IC",
+#          color="purple", size = 10, line_color = 'purple', fill_alpha = 0.5, line_width = 2)
+#p07.line(x = 'date', y = 'n_ic', source = source_db_reg_puglia, legend_label="IC",
+#          color="purple", line_color = 'purple', alpha = 1, line_width = 2)
 p07.circle(x = 'date', y = 'n_dead', source = source_db_reg_puglia, legend_label="Deaths",
           color="black", size = 10, line_color = 'black', fill_alpha = 0.5, line_width = 2)
 p07.line(x = 'date', y = 'n_dead', source = source_db_reg_puglia, legend_label="Deaths",
@@ -1494,7 +1550,7 @@ note_en.sizing_mode = 'scale_width'
 
     
 ### Costruzione delle Tab e dei titoli
-ptab1 = bkh_plt.gridplot([[cover_1, LegClick, LegMeaning], [p01, p02, p03], [Sign]], toolbar_location = 'left')
+ptab1 = bkh_plt.gridplot([[cover_1, LegClick, LegMeaning], [p01, p02, p03], [p021, p022, p011], [Sign]], toolbar_location = 'left')
 ptab2 = bkh_plt.gridplot([[cover_1, LegClick, LegMeaning], [p04, p05, p06], [Sign]], toolbar_location = 'left')
 ptab3 = bkh_plt.gridplot([[cover_1, LegClick, LegMeaning], [p07, p08, p09],[Sign]], toolbar_location = 'left')
 ptab4 = bkh_plt.gridplot([[cover_1, LegClick, LegMeaning], [p10, p11, p12], [Sign]], toolbar_location = 'left')
@@ -1505,7 +1561,7 @@ ptab8 = bkh_plt.gridplot([[cover_1, LegClick, LegMeaning], [p19, p20, p21], [Sig
 ptabnote = bkh_plt.gridplot([[note_en, note_it]], toolbar_location = 'left')
 
 
-ptab1.sizing_mode = 'scale_width'
+ptab1.sizing_mode = 'stretch_height'
 ptab2.sizing_mode = 'scale_width'
 ptab3.sizing_mode = 'scale_width'
 ptab4.sizing_mode = 'scale_width'
@@ -1524,7 +1580,7 @@ tab4 = bkh_mod.Panel(child=ptab4, title = 'Situation in Apulia Provinces')
 tab5 = bkh_mod.Panel(child=ptab5, title = 'Global Spread Map')
 tab6 = bkh_mod.Panel(child=ptab6, title = 'Global Statistics')
 tab7 = bkh_mod.Panel(child=ptab7, title = 'SI Model - Italy')
-tab8 = bkh_mod.Panel(child=ptab8, title = 'SIR Model - Italy')
+#tab8 = bkh_mod.Panel(child=ptab8, title = 'SIR Model - Italy')
 tabnote = bkh_mod.Panel(child=ptabnote, title = 'About')
 
 
@@ -1534,7 +1590,7 @@ tabsx = bkh_mod_w.Tabs(tabs = [
         tab1,
         tab2,
         tab7,
-        tab8,
+        #tab8,
         tab3,
         tab4,
         tab5,
