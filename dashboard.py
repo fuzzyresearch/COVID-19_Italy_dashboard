@@ -112,13 +112,13 @@ col_national = ['data', 'stato', 'ricoverati_con_sintomi', 'terapia_intensiva',
        'totale_ospedalizzati', 'isolamento_domiciliare', 'totale_positivi',
        'variazione_totale_positivi', 'nuovi_positivi', 'dimessi_guariti',
        'deceduti', 'casi_da_sospetto_diagnostico', 'casi_da_screening',
-       'totale_casi', 'tamponi', 'casi_testati', 'date_string']
+       'totale_casi', 'tamponi', 'casi_testati', 'ingressi_terapia_intensiva', 'date_string']
 
 col_national_mod = ['date', 'state', 'n_hosp_not_ic', 'n_ic', 'n_tot_hosp', 
                     'n_pos_at_home', 'n_tot_pos', 'n_var_tot_pos', 'n_new_pos',      
                     'n_recovered', 'n_dead', 
                     'n_case_susp', 'n_case_screen',
-                    'n_tot_case', 'n_swab', 'n_test', 'date_string']
+                    'n_tot_case', 'n_swab', 'n_test', 'new_ic', 'date_string']
 
 
 col_national_num = ['n_hosp_not_ic', 'n_ic', 'n_tot_hosp', 'n_pos_at_home', 
@@ -132,7 +132,7 @@ col_regional = ['data', 'stato', 'codice_regione', 'denominazione_regione', 'lat
        'totale_ospedalizzati', 'isolamento_domiciliare', 'totale_positivi',
        'variazione_totale_positivi', 'nuovi_positivi', 'dimessi_guariti',
        'deceduti', 'casi_da_sospetto_diagnostico', 'casi_da_screening',
-       'totale_casi', 'tamponi', 'casi_testati', 'note', 'date_string']
+       'totale_casi', 'tamponi', 'casi_testati', 'ingressi_terapia_intensiva', 'date_string']
 
 
 col_regional_mod = ['date', 'state', 'code_reg', 'name_reg', 'lat',
@@ -141,7 +141,7 @@ col_regional_mod = ['date', 'state', 'code_reg', 'name_reg', 'lat',
                     'n_pos_at_home', 'n_tot_pos', 'n_var_tot_pos', 'n_new_pos',      
                     'n_recovered', 'n_dead', 
                     'n_case_susp', 'n_case_screen',
-                    'n_tot_case', 'n_swab', 'n_test', 'date_string']
+                    'n_tot_case', 'n_swab', 'n_test', 'new_ic', 'date_string']
 
 
 col_province = ['data', 'stato', 'codice_regione', 'denominazione_regione',
@@ -152,10 +152,10 @@ col_province_mod = ['date', 'state', 'code_reg', 'name_reg',
                 'code_prov', 'name_prov', 'acronym_prov', 'lat',
                 'long', 'n_tot_case', 'date_string']
 
-X_national = db_national.copy()
+X_national = db_national[col_national]
 X_national.columns = col_national_mod
 
-X_regional = db_regional.copy()
+X_regional = db_regional[col_regional]
 X_regional.columns = col_regional_mod
 X_regional["eq_coord"] = "("+X_regional.lat.map(str)+","+X_regional.long.map(str)+")"
 X_regional["utm_coord_x"] = X_regional["eq_coord"].map(mercx)
@@ -322,6 +322,7 @@ X_world_last.columns = ['State', 'Country', 'Lat', 'Long', "eq_coord", 'conf', '
 X_world_last['State'] = X_world_last['State'].fillna('-')
 X_world_last = X_world_last.fillna(0.0)
 #X_world_last["eq_coord"] = "("+X_world_last.Lat.map(str)+","+X_world_last.Long.map(str)+")"
+X_world_last = X_world_last.loc[(X_world_last.Lat != 0) & (X_world_last.Long != 0)]
 X_world_last["utm_coord_x"] = X_world_last["eq_coord"].map(mercx)
 X_world_last["utm_coord_y"] = X_world_last["eq_coord"].map(mercy)
 
@@ -382,8 +383,8 @@ def si(y, future_time_window):
     return Iest, Inew
 
 
-ROLLING_WINDOW_SI = 10
-FUTURE_TIME_WINDOW = 30
+ROLLING_WINDOW_SI = 20
+FUTURE_TIME_WINDOW = 100
 STARTING_TIME = 90
 
 remaining_list_of_date = []
@@ -448,7 +449,7 @@ SCENARIO_RANGE = np.array(range(len(yori)-10,len(yori)))
 
 ##############################################################################
 
-TIME_WINDOW_SIR = 400    
+TIME_WINDOW_SIR = 500    
 
 Iobs = X_national.loc[:, "n_tot_pos"]
 Robs = X_national.loc[:, "n_recovered"] + X_national.loc[:, "n_dead"]
