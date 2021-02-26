@@ -161,7 +161,7 @@ X_regional["eq_coord"] = "("+X_regional.lat.map(str)+","+X_regional.long.map(str
 X_regional["utm_coord_x"] = X_regional["eq_coord"].map(mercx)
 X_regional["utm_coord_y"] = X_regional["eq_coord"].map(mercy)
 
-X_province = db_province.copy()
+X_province = db_province[col_province]
 X_province.columns = col_province_mod
 X_province["eq_coord"] = "("+X_province.lat.map(str)+","+X_province.long.map(str)+")"
 X_province["utm_coord_x"] = X_province["eq_coord"].map(mercx)
